@@ -4,21 +4,21 @@
 
 [Weitere Fotos in der Galerie auf Thingiverse](https://www.thingiverse.com/thing:4644826)
 
-Ziel dieses IOT-Projekt ist es, eine einfache Variante eines CO2-Messgerätes zum Nachbauen zu entwickeln, Gedacht für den Einsatz in Schul- bzw. Klassenräumen. 
+Ziel dieses IOT-Projekt ist es, einen Bausatz für ein CO2-Messgerät zu entwickeln, für den Einsatz in Schul- bzw. Klassenräumen. 
 
-Das Gerät soll den Personen im Klassenzimmer signalisieren, dass die Luft im Raum einen erhöhten Gehalt an CO2 hat und dass dieser Raum gelüftet werden sollte. Das Gerät zeigt ein Warnsignal in Form einer Farbampel an. Die einzelnen Sensorwerte werden auf einem Display ausgegeben. 
+Das Gerät soll den Personen im Klassenzimmer signalisieren, dass die Luft im Raum einen erhöhten Gehalt an CO2 hat und vielleicht gelüftet werden sollte. Das Sketch ist ein Beispiel und zeigt über die Neopixel ein Farbsignal in Form einer Farbampel an. Die genauen Sensorwerte werden zusätzlich auf einem Display ausgegeben und können über einen touchbutton an der Gehäuseseite ausgewählt werden. 
 
-Achtung: In der aktuellen Version wird der HelTec Lora Wifi v2 als Microcontroller benutzt. Die Daten werden außerdem nur per LoRaWAN übertragen. An der WiFi Variante mit einem Amica wird gearbeitet.
+Achtung: In der aktuellen Version wird der HelTec Lora Wifi v2 als Microcontroller benutzt. Sensoraten werden außerdem nur per LoRaWAN übertragen. Eine WiFi Variante mit einem ESP8266 folgt.
 
 Gemessen werden Temperatur (C), Feuchte (%), CO2 (ppm), Luftdruck(hPa) und die Luftqualität (flüchtige organische Verbindungen, VOC).
 
-Sensordaten werden via **LoRa WAN ** an thethingsnetwork übertragen und von dort aus thingsspeak.com grafisch aufbereitet.
+Die Sensordaten werden via **LoRa WAN ** an thethingsnetwork übertragen und von dort aus thingsspeak.com grafisch aufbereitet.
 
 **Der Code für eine Version welche Daten per WiFi sendet folgt in Kürze.**
 
 In weiteren Schritten soll das modular aufgebaute Gehäuse erweitert werden, um zu demonstrieren, dass die bisherigen Funktionen leicht durch andere Sensoren ergänzt oder ersetzt werden können. In Arbeit ist ein alternativer Gehäusedeckel mit größerem 1.8" TFT Diplay, welches das CO2 Symbol ersetzt und zeigt, dass das Gerät auch vertikal aufgestellt werden kann. Außerdem ist der Austausch des BlueDot Luftsensor durch einen dB Sensor geplant damit aus einem CO2 Messgerät ohne Aufwand ein Schallpegel Messgerät wird. Denkbar sind auch Mesh-Wegweiser oder die Erfassung der Bodenfeuchte von Klassenzimmerpflanzen.
 
-In dieser Version wird ein HelTec LoRa WiFi Microcontroller in Verbindung mit einem günstigen MH-Z19B Infrarot CO2 Sensor und einen BME680 Luftqualitätssesor benutzt. Außerdem 8 Neopixel (WS2812b) und ein touch button sensor. Bis auf den CO2 Sensor, der mit 5V betrieben wird, läuft alles andere mit 3.3V Der CO2 Sensor wird seriell über die RX/TX Pins abgefragt. Der Luftqualitätssensor kommuniziert über den i2c bus (SDA:Pin 21), SCK:Pin 22) Die Neopixel müssen mit PIN 25 verbunden werden. Der Touchbutton ist t4 im Sketch, aber es können auch alle anderen verwendet werden solange dies im sketch auch angegeben wird.
+In dieser Version wird der Microcontroller in Verbindung mit einem günstigen MH-Z19B Infrarot CO2 Sensor und einen BME680 Luftqualitätssesor benutzt. Außerdem 8 Neopixel (WS2812b) und ein touch button sensor. Bis auf den CO2 Sensor, der mit 5V betrieben wird, reicht für alles andere 3.3V. Der CO2 Sensor wird seriell über die RX/TX Pins abgefragt. Der Luftqualitätssensor kommuniziert über den i2c bus (SDA:Pin 21), SCK:Pin 22) Die Neopixel müssen mit PIN 25 am Microcontroller verbunden werden. Der Touchbutton ist t4 im Sketch, aber es können auch alle anderen verwendet werden solange dies im sketch auch angegeben wird.
 
 **Kabelfarben:**
 
@@ -30,9 +30,6 @@ In dieser Version wird ein HelTec LoRa WiFi Microcontroller in Verbindung mit ei
 - Seriel TX = gelb
 - Neopixel = lila
 - Touchbutton = grau
-
-***Werkzeug***
-Kombizange, Pinzette, Schraubendreher, Isolierband, Sekundenkleber, Abisolierer, Lötkolben
 
 **Gehäuse** (Alle Bauteile wurden mit TinkerCad.com entworfen)
 
