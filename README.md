@@ -2,8 +2,7 @@
 
 ![CO2-Ampel_Galerie](CO2-Meter2.jpg)
 
-[Weitere Fotos in der Galerie](https://gitlab.com/lora-lab-nrw/co2-meter/-/tree/master/Galerie) oder auf 
-[Thingiverse](https://www.thingiverse.com/thing:4644826)
+[Weitere Fotos in der Galerie auf Thingiverse](https://www.thingiverse.com/thing:4644826)
 
 Ziel dieses IOT-Projekt ist es, eine einfache Variante eines CO2-Messgerätes zum Nachbauen zu entwickeln, Gedacht für den Einsatz in Schul- bzw. Klassenräumen. 
 
