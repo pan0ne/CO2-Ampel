@@ -1,6 +1,6 @@
 ***CO2-Messgerät/Ampel***
 
-![CO2-Ampel_Galerie](CO2-Meter2.jpg)
+![CO2-Ampel_Galerie](images/CO2-Meter2.jpg)
 
 [Weitere Fotos in der Galerie auf Thingiverse](https://www.thingiverse.com/thing:4644826)
 
@@ -75,5 +75,5 @@ Achtung: Es befinden sich weitere Gehäuseteile für die WiFi Variante im Verzei
 - Touch-Button = grau
 
 
-![CO2-Ampel_3DModel](CO2Ampel_WiringDiagram.png)
+![CO2-Ampel_3DModel](images/CO2Ampel_WiringDiagram.png)
 
