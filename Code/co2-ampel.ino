@@ -114,8 +114,10 @@ void logo()
 
  ****************************************************************************/
 
-#define PIN       5 // Pin - auf dem Heltec LoRa Wifi v2 ist es Pin 25
-#define NUMPIXELS 8 // Anzahl der Pixel
+#define PIN       8 // Pin D8 / GPIO15 - auf dem ESP8266 
+
+#define NUMPIXELS 8 // Anzahl der Neopixel
+
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
 
@@ -147,7 +149,7 @@ void colorWipe(uint32_t color, int wait) {
 
  ****************************************************************************/
 
-#define T4  10 // GPIO 10
+#define T4  7 // D7 / GPIO 13
 
 /***************************************************************************
     Setup
