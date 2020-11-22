@@ -1,63 +1,43 @@
 /*
   CO2 Ampel
-  Dies ist ein Beispiel Arduino Sketch für eine CO2 Ampel auf Basis eines ESP8266 NodeMCU/Amica. 
+  Dies ist ein Beispiel Arduino Sketch für eine CO2 Ampel. 
   
   Notice:
   The onboard OLED display is SSD1306 driver and I2C interface. In order to make the
   OLED correctly operation, you should output a high-low-high(1-0-1) signal by soft-
   ware to OLED's reset pin, the low-level signal at least 5ms.
 
-  OLED Pins -> ESP8266_amica:
-  OLED_SDA -- D2
-  OLED_SCL -- D1
-  OLED_RST -- RST
+  OLED Pins -> ESP32:
+  OLED_SDA -- GPIO4
+  OLED_SCL -- GPIO15
+  OLED_RST -- GPIO16
   
-  MH-Z19b Pins -> ESP8266_amica:
-  MH-Z19b_RX - TX Pin
-  MH-Z19b_TX - RX Pin 
+  MH-Z19b Pins -> ESP32:
+  MH-Z19b_RX - TX Pin (GPIO 1)
+  MH-Z19b_TX - RX Pin (GPIO 3) 
  
-  Neopixel Pin -> ESP8266_amica:
-  Di - D5 (GPIO 25)
+  Neopixel Pin -> ESP32:
+  Di - Pin 25 (GPIO 25)
   
-  BME680 Pins -> ESP8266_amica:
-  SDA - D2 (GPIO 2)
-  SCL - D1 (GPIO 1)
+  BME680 Pins -> ESP32:
+  SDA - Pin 21 (GPIO 21)
+  SCL - Pin 22 (GPIO 22)
   
-  Touch Button Pin -> ESP8266:
-  Di - D10 (GPIO 10)  
+  Touch Button Pin -> ESP32:
+  Di - Pin 13 (GPIO 13)  
   
   */
 #include <Arduino.h>
-#include "SSD1306Wire.h"
+#include <TTN_esp32.h>
 #include <Adafruit_NeoPixel.h>
+#include "TTN_CayenneLPP.h"
+#include "heltec.h"
 #include "images.h"
-#include "config.h"
 #include "MHZ19.h"
 #include <SoftwareSerial.h>
-#include "ThingSpeak.h"
-#include <ESP8266WiFi.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include "Adafruit_BME680.h"
-
-/***************************************************************************
-    Display
- ****************************************************************************/
-
-SSD1306Wire display(0x3c, SDA, SCL);
-
-/***************************************************************************
-    WiFi und thingspeak
- ****************************************************************************/
-char ssid[] = SECRET_SSID;   // your network SSID (name) 
-char pass[] = SECRET_PASS;   // your network password
-int keyIndex = 0;            // your network key Index number (needed only for WEP)
-WiFiClient  client;
-
-unsigned long myChannelNumber = SECRET_CH_ID;
-const char * myWriteAPIKey = SECRET_WRITE_APIKEY;
-
-String myStatus = "";
 
 /***************************************************************************
     CO2 Sensor
@@ -91,6 +71,40 @@ int   getgasreference_count = 0;
 int   gas_lower_limit = 10000;  // Bad air quality limit
 int   gas_upper_limit = 300000; // Good air quality limit
 
+/***************************************************************************
+    Go to your TTN console register a device then the copy fields
+    and replace the CHANGE_ME strings below
+ ****************************************************************************/
+const char* devEui = "xxx"; // Change to TTN Device EUI
+const char* appEui = "xxx"; // Change to TTN Application EUI
+const char* appKey = "xxx"; // Chaneg to TTN Application Key
+#define BAND    868E6  //you can set band here directly,e.g. 868E6,915E6
+
+unsigned int counter = 0;
+String rssi = "RSSI --";
+String packSize = "--";
+String packet ;
+
+TTN_esp32 ttn ;
+TTN_CayenneLPP lpp;
+
+
+/***************************************************************************
+    Debug LORA Info
+
+ ****************************************************************************/
+void message(const uint8_t* payload, size_t size, int rssi)
+{
+  Serial.println("-- MESSAGE");
+  Serial.print("Received " + String(size) + " bytes RSSI=" + String(rssi) + "db");
+  for (int i = 0; i < size; i++)
+  {
+    Serial.print(" " + String(payload[i]));
+    // Serial.write(payload[i]);
+  }
+
+  Serial.println();
+}
 
 /***************************************************************************
     Logo aus der images.h
@@ -98,14 +112,14 @@ int   gas_upper_limit = 300000; // Good air quality limit
  ****************************************************************************/
 void logo()
 {
-  display.clear();
-  display.drawXbm(85, 2, logo_width, logo_height, co2a_logo);
-  display.setFont(ArialMT_Plain_10);
-  display.drawString(15, 15, "DUISentrieb");
+  Heltec.display->clear();
+  Heltec.display->drawXbm(85, 2, logo_width, logo_height, logo_bits);
+  Heltec.display->setFont(ArialMT_Plain_10);
+  Heltec.display->drawString(15, 15, "DUISentrieb");
   delay(1000);
-  display.setFont(ArialMT_Plain_24);
-  display.drawString(2, 35, "CO2 Ampel");
-  display.display();
+  Heltec.display->setFont(ArialMT_Plain_24);
+  Heltec.display->drawString(2, 35, "CO² Ampel");
+  Heltec.display->display();
   delay(6000);
 }
 
@@ -114,10 +128,8 @@ void logo()
 
  ****************************************************************************/
 
-#define PIN       8 // Pin D8 / GPIO15 - auf dem ESP8266 
-
-#define NUMPIXELS 8 // Anzahl der Neopixel
-
+#define PIN        25 // Pin - auf dem Heltec LoRa Wifi v2 ist es Pin 25
+#define NUMPIXELS 6 // Anzahl der Pixel
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
 
@@ -144,12 +156,6 @@ void colorWipe(uint32_t color, int wait) {
 }
 
 
-/***************************************************************************
-    Touch Button
-
- ****************************************************************************/
-
-#define T4  7 // D7 / GPIO 13
 
 /***************************************************************************
     Setup
@@ -157,16 +163,11 @@ void colorWipe(uint32_t color, int wait) {
  ****************************************************************************/
 void setup()
 {
-  Serial.begin(115200);
-  
-  WiFi.mode(WIFI_STA); 
-  Wire.begin();
-  bme.begin();
- 
-    /*if (!bme.begin()) {
+   Wire.begin();
+    if (!bme.begin()) {
       Serial.println("Could not find a valid BME680 sensor, check wiring!");
       while (1);
-    } else Serial.println("Found a sensor");*/
+    } else Serial.println("Found a sensor");
 
   // Set up oversampling and filter initialization
   bme.setTemperatureOversampling(BME680_OS_8X);
@@ -178,36 +179,44 @@ void setup()
   // The sensor takes ~30-mins to fully stabilise
   GetGasReference();
 
+  Heltec.begin(true /*DisplayEnable Enable*/, true /*Heltec.Heltec.Heltec.LoRa Disable*/, true /*Serial Enable*/, true /*PABOOST Enable*/, BAND /*long BAND*/);
+  Serial.begin(115200);
   colorWipe(pixels.Color(  0, 150,   150), 40); // Blue
-   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-  
-  // Initialising the UI will init the display too.
-  display.init();
-
-  display.flipScreenVertically();
-  display.setFont(ArialMT_Plain_10);
-
-  // Show initial display buffer contents on the screen --
-  // the library initializes this with an Adafruit splash screen.
-  display.clear();
-  delay(2000); // Pause for 2 seconds
-
-  // Clear the buffer
-  display.clear();
-
+  Heltec.display->init();
+  Heltec.display->flipScreenVertically();
   logo();
   colorWipe(pixels.Color(  255, 71,   0), 40); // Orange
 
-  ThingSpeak.begin(client);  // Initialize ThingSpeak
-  colorWipe(pixels.Color(  0, 150,   0), 70); // Green
-  display.clear();
-  display.setTextAlignment(TEXT_ALIGN_CENTER);
-  display.setFont(ArialMT_Plain_16);
-  display.drawString(60, 0, "WiFi verbunden");
-  display.display();
+  Heltec.display->clear();
+  Heltec.display->setFont(ArialMT_Plain_16);
+  Heltec.display->drawString(25, 10, "LoRa TTN");
+  Heltec.display->setFont(ArialMT_Plain_10);
+  Heltec.display->drawString(5, 30, "Verbindungsversuch...");
+  Heltec.display->display();
   delay(3000);
+  ttn.begin();
+  ttn.onMessage(message);
+  ttn.join(devEui, appEui, appKey);
+  while (!ttn.isJoined())
+  {
+    Heltec.display->clear();
+    Heltec.display->setFont(ArialMT_Plain_10);
+    Heltec.display->drawString(20, 20, "Verbinde zu TTN");
+    Heltec.display->drawString(30, 40, "Bitte warten...");
+    Heltec.display->display();
+    rainbow(5);
+    delay(1000);
+  }
+  colorWipe(pixels.Color(  0, 150,   0), 70); // Green
+  Heltec.display->clear();
+  Heltec.display->setFont(ArialMT_Plain_16);
+  Heltec.display->drawString(5, 30, "TTN verbunden");
+  Heltec.display->display();
+  delay(3000);
+  logo();
+  ttn.showStatus();
 
-SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
+  mySerial.begin(BAUDRATE, SERIAL_8N1, RX_PIN, TX_PIN); // (ESP32 Example) device to MH-Z19 serial start   
   myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin(). 
   myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
 
@@ -216,63 +225,62 @@ SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) crea
 
 void loop()
 {
-  
-  Serial.println(digitalRead(T4));  // get value using T4 Touch Sensor
-  display.clear();
-  display.setTextAlignment(TEXT_ALIGN_CENTER);
-  display.setFont(ArialMT_Plain_24);
-  display.drawString(60, 0, "CO2");
-  display.setTextAlignment(TEXT_ALIGN_RIGHT);
-  display.setFont(ArialMT_Plain_16);
-  display.drawString(120, 40, " ppm");
-  display.display();
-  display.setTextAlignment(TEXT_ALIGN_LEFT);
-  display.setFont(ArialMT_Plain_24);
+  Serial.println(touchRead(T4));  // get value using T4 Touch Sensor
+  Heltec.display->clear();
+  Heltec.display->setTextAlignment(TEXT_ALIGN_CENTER);
+  Heltec.display->setFont(ArialMT_Plain_24);
+  Heltec.display->drawString(60, 0, "CO2");
+  Heltec.display->setTextAlignment(TEXT_ALIGN_RIGHT);
+  Heltec.display->setFont(ArialMT_Plain_16);
+  Heltec.display->drawString(120, 40, " ppm");
+  Heltec.display->display();
+  Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
+  Heltec.display->setFont(ArialMT_Plain_24);
   readMHZ19b();
-  display.drawString(10, 30, String(CO2));
-  display.display();
+  Heltec.display->drawString(10, 30, String(CO2));
+  Heltec.display->display();
   co2Warnung();
 
+  if (touchRead(T4) == 1){
+  Heltec.display->clear();
+  Heltec.display->setTextAlignment(TEXT_ALIGN_LEFT);
+  Heltec.display->setFont(ArialMT_Plain_10);
+  Heltec.display->drawString(5, 2, " Temperature = " + String(bme.readTemperature(), 2)     + "°C");
+  Heltec.display->drawString(5, 12, " Pressure = " + String(bme.readPressure() / 100.0F) + " hPa");
+  Heltec.display->drawString(5, 22, " Humidity = " + String(bme.readHumidity(), 1)        + "%");
+  Heltec.display->drawString(5, 33, " Gas = " + String(gas_reference)               + " ohms\n");
+ 
+  humidity_score = GetHumidityScore();
+  gas_score      = GetGasScore();
 
-  if (digitalRead(T4) == 1){
-    display.clear();
-    display.setTextAlignment(TEXT_ALIGN_LEFT);
-    display.setFont(ArialMT_Plain_10);
-    display.drawString(5, 2, " Temperature = " + String(bme.readTemperature(), 2)     + "°C");
-    display.drawString(5, 12, " Pressure = " + String(bme.readPressure() / 100.0F) + " hPa");
-    display.drawString(5, 22, " Humidity = " + String(bme.readHumidity(), 1)        + "%");
-    display.drawString(5, 33, " Gas = " + String(gas_reference)               + " ohms\n");
-   
-    humidity_score = GetHumidityScore();
-    gas_score      = GetGasScore();
-  
-    //Combine results for the final IAQ index value (0-100% where 100% is good quality air)
-    float air_quality_score = humidity_score + gas_score;
-    if ((getgasreference_count++) % 5 == 0) GetGasReference();
-   display.display();
-   delay(3000);   
+  //Combine results for the final IAQ index value (0-100% where 100% is good quality air)
+  float air_quality_score = humidity_score + gas_score;
+  if ((getgasreference_count++) % 5 == 0) GetGasReference();
+ Heltec.display->display();
+ delay(3000);   
   };  // get value using T4 Touch Sensor
 
-  // set the fields with the values
-  ThingSpeak.setField(1, CO2);
-  ThingSpeak.setField(2, bme.readTemperature());
-  ThingSpeak.setField(3, bme.readHumidity());
-  ThingSpeak.setField(4, gas_score );
-  
-  // set the status
-  ThingSpeak.setStatus(myStatus);
-  
-  // write to the ThingSpeak channel
-  int x = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
-  if(x == 200){
-    Serial.println("Channel update successful.");
-    myStatus = String("Online");
-  }
-  else{
-    Serial.println("Problem updating channel. HTTP error code " + String(x));
-    myStatus = String("Offline");
-  }
+  // send LoRa Packets
+    // Split word (16 bits) into 2 bytes of 8
+    byte payload[4];
+    payload[0] = highByte(CO2);
+    payload[1] = lowByte(CO2);
+    payload[2] = highByte(Temp);
+    payload[3] = lowByte(Temp);
 
+    if (ttn.sendBytes(payload, 4))
+      {
+          Serial.printf("CO2: %d ppm - TTN_CayenneLPP: %02X%02X\n", CO2, payload[0], payload[1]);
+          Serial.printf("Temperatur: %d C° - TTN_CayenneLPP: %02X%02X\n", Temp, payload[2], payload[3]);
+      }
+
+  counter++;
+  digitalWrite(LED, LOW);    // turn the LED off by making the voltage LOW
+  delay(2000); 
+  digitalWrite(LED, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(1000);                       // wait for a second
+  digitalWrite(LED, LOW);    // turn the LED off by making the voltage LOW
+  delay(2000);                       // wait for a second
 }
 
 void readMHZ19b()
@@ -342,7 +350,7 @@ String CalculateIAQ(int score) {
   else if (score >= 151 && score <= 175 ) IAQ_text += "Unhealthy for Sensitive Groups";
   else if (score >=  51 && score <= 150 ) IAQ_text += "Moderate";
   else if (score >=  00 && score <=  50 ) IAQ_text += "Good";
-  //display.write(5, 44, "IAQ Score = " + String(score) + ", ");
+  Heltec.display->drawString(5, 44, "IAQ Score = " + String(score) + ", ");
   return IAQ_text;
 }
 
