@@ -1,11 +1,16 @@
 /*
   CO2 Ampel
-  Dies ist ein Beispiel Arduino Sketch für eine CO2 Ampel 
-  mit einem NodeMCU ESP8266 Amica und SSD1306 Display
+  Dies ist ein Beispiel Arduino Sketch für eine CO2 Ampel für einen ESP8266 NodeMCU/Amica. 
+  
+  Notice:
+  The onboard OLED display is SSD1306 driver and I2C interface. In order to make the
+  OLED correctly operation, you should output a high-low-high(1-0-1) signal by soft-
+  ware to OLED's reset pin, the low-level signal at least 5ms.
 
   OLED Pins -> ESP8266_amica:
-  OLED_SDA -- D1
-  OLED_SCL -- D2
+  OLED_SDA -- D2
+  OLED_SCL -- D1
+  OLED_RST -- RST
   
   MH-Z19b Pins -> ESP8266_amica:
   MH-Z19b_RX - TX Pin
@@ -23,28 +28,23 @@
   
   */
 #include <Arduino.h>
-#include <SPI.h>
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include "SSD1306Wire.h"
 #include <Adafruit_NeoPixel.h>
 #include "images.h"
 #include "config.h"
 #include "MHZ19.h"
 #include <SoftwareSerial.h>
-#include <Adafruit_Sensor.h>
-#include "Adafruit_BME680.h"
 #include "ThingSpeak.h"
 #include <ESP8266WiFi.h>
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include "Adafruit_BME680.h"
 
+/***************************************************************************
+    Display
+ ****************************************************************************/
 
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-
+SSD1306Wire display(0x3c, SDA, SCL);
 
 /***************************************************************************
     WiFi und thingspeak
@@ -98,18 +98,13 @@ int   gas_upper_limit = 300000; // Good air quality limit
  ****************************************************************************/
 void logo()
 {
-  display.clearDisplay();
-  display.drawBitmap(
-    (display.width()  - logo_width ) / 2,
-    (display.height() - logo_height) / 2,
-    co2a_logo, logo_height, logo_height, 1);
-  display.setTextSize(10);
-    display.setCursor(15,15);
-  display.println("DUISentrieb");
+  display.clear();
+  display.drawXbm(85, 2, logo_width, logo_height, co2a_logo);
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(15, 15, "DUISentrieb");
   delay(1000);
-  display.setTextSize(24);
-    display.setCursor(2,35);
-  display.println("CO² Ampel");
+  display.setFont(ArialMT_Plain_24);
+  display.drawString(2, 35, "CO2 Ampel");
   display.display();
   delay(6000);
 }
@@ -119,7 +114,7 @@ void logo()
 
  ****************************************************************************/
 
-#define PIN       5 // Pin - auf dem Heltec LoRa Wifi v2 ist es Pin 25
+#define PIN       8
 #define NUMPIXELS 8 // Anzahl der Pixel
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
@@ -152,7 +147,7 @@ void colorWipe(uint32_t color, int wait) {
 
  ****************************************************************************/
 
-#define T4  10 // GPIO 10
+#define T4  7 // GPIO 10
 
 /***************************************************************************
     Setup
@@ -160,13 +155,16 @@ void colorWipe(uint32_t color, int wait) {
  ****************************************************************************/
 void setup()
 {
+  Serial.begin(115200);
   
   WiFi.mode(WIFI_STA); 
   Wire.begin();
-    if (!bme.begin()) {
+  bme.begin();
+ 
+    /*if (!bme.begin()) {
       Serial.println("Could not find a valid BME680 sensor, check wiring!");
       while (1);
-    } else Serial.println("Found a sensor");
+    } else Serial.println("Found a sensor");*/
 
   // Set up oversampling and filter initialization
   bme.setTemperatureOversampling(BME680_OS_8X);
@@ -178,35 +176,34 @@ void setup()
   // The sensor takes ~30-mins to fully stabilise
   GetGasReference();
 
-  Serial.begin(115200);
   colorWipe(pixels.Color(  0, 150,   150), 40); // Blue
    // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x32
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;); // Don't proceed, loop forever
-  }
+  // Initialising the UI will init the display too.
+  display.init();
+
+  display.flipScreenVertically();
+  display.setFont(ArialMT_Plain_10);
 
   // Show initial display buffer contents on the screen --
   // the library initializes this with an Adafruit splash screen.
-  display.clearDisplay();
+  display.clear();
   delay(2000); // Pause for 2 seconds
 
   // Clear the buffer
-  display.clearDisplay();
+  display.clear();
 
   logo();
   colorWipe(pixels.Color(  255, 71,   0), 40); // Orange
 
   ThingSpeak.begin(client);  // Initialize ThingSpeak
   colorWipe(pixels.Color(  0, 150,   0), 70); // Green
-  display.clearDisplay();
-  display.setTextSize(16);
-    display.setCursor(5,30);
-  display.println("Verbunden");
+  display.clear();
+  display.setTextAlignment(TEXT_ALIGN_CENTER);
+  display.setFont(ArialMT_Plain_16);
+  display.drawString(60, 0, "WiFi verbunden");
   display.display();
   delay(3000);
-  logo();
 
 SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
   myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin(). 
@@ -219,41 +216,39 @@ void loop()
 {
   
   Serial.println(digitalRead(T4));  // get value using T4 Touch Sensor
-  display.clearDisplay();
-  display.setTextSize(24);
-      display.setCursor(60,2);
-  display.println("CO2");
-  display.setTextSize(16);
-        display.setCursor(120,40);
-  display.println(" ppm");
+  display.clear();
+  display.setTextAlignment(TEXT_ALIGN_CENTER);
+  display.setFont(ArialMT_Plain_24);
+  display.drawString(60, 0, "CO2");
+  display.setTextAlignment(TEXT_ALIGN_RIGHT);
+  display.setFont(ArialMT_Plain_16);
+  display.drawString(120, 40, " ppm");
   display.display();
-  display.setTextSize(24);
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.setFont(ArialMT_Plain_24);
   readMHZ19b();
-  display.setCursor(10,30);
-  display.println(String(CO2));
+  display.drawString(10, 30, String(CO2));
   display.display();
   co2Warnung();
 
-  if (digitalRead(T4) == 1){
-  display.clearDisplay();
-  display.setTextSize(10);
-    display.setCursor(5,2);
-  display.println(" Temperature = " + String(bme.readTemperature(), 2)     + "°C");
-    display.setCursor(5,12);
-  display.println(" Pressure = " + String(bme.readPressure() / 100.0F) + " hPa");
-    display.setCursor(5,22);
-  display.println(" Humidity = " + String(bme.readHumidity(), 1)        + "%");
-    display.setCursor(5,33);
-  display.println(" Gas = " + String(gas_reference)          + " ohms\n");
- 
-  humidity_score = GetHumidityScore();
-  gas_score      = GetGasScore();
 
-  //Combine results for the final IAQ index value (0-100% where 100% is good quality air)
-  float air_quality_score = humidity_score + gas_score;
-  if ((getgasreference_count++) % 5 == 0) GetGasReference();
- display.display();
- delay(3000);   
+  if (digitalRead(T4) == 1){
+    display.clear();
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+    display.setFont(ArialMT_Plain_10);
+    display.drawString(5, 2, " Temperature = " + String(bme.readTemperature(), 2)     + "°C");
+    display.drawString(5, 12, " Pressure = " + String(bme.readPressure() / 100.0F) + " hPa");
+    display.drawString(5, 22, " Humidity = " + String(bme.readHumidity(), 1)        + "%");
+    display.drawString(5, 33, " Gas = " + String(gas_reference)               + " ohms\n");
+   
+    humidity_score = GetHumidityScore();
+    gas_score      = GetGasScore();
+  
+    //Combine results for the final IAQ index value (0-100% where 100% is good quality air)
+    float air_quality_score = humidity_score + gas_score;
+    if ((getgasreference_count++) % 5 == 0) GetGasReference();
+   display.display();
+   delay(3000);   
   };  // get value using T4 Touch Sensor
 
   // set the fields with the values
