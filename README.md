@@ -75,6 +75,11 @@ Achtung: Es befinden sich weitere Gehäuseteile für die WiFi Variante im Verzei
 - Neopixel = lila
 - Touch-Button = grau
 
+**Fritzing für ESP32 (Heltec Wifi LoRa v2)**
 
 ![CO2-Ampel_3DModel](images/CO2Ampel_WiringDiagram.png)
+
+**Fritzing für ESP8266 (Amica)**
+
+
 
