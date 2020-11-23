@@ -81,7 +81,7 @@ Achtung: Es befinden sich weitere Gehäuseteile für die WiFi Variante im Verzei
 
 **Fritzing für ESP8266 (Amica)**
 
-![CO2-Ampel_ESP8266_Schema](images/Schema_ESP8266.jpeg)
+![CO2-Ampel_ESP8266_Schema](Docs/Schema_ESP8266.jpeg)
 
 
 
