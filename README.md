@@ -37,31 +37,32 @@ Achtung: Es befinden sich weitere Gehäuseteile für die WiFi Variante im Verzei
 **Wiring/Verkabelung:**
 
 
-| BME680 | Heltec |
-| ------ | ------ |
-| 3,3V | 3,3V |
-| GND | GND |
-| SDA | 22 |
-| SCL | 21 |
 
-| MH-Z19B | Heltec |
-| ------ | ------ |
-| 5V | 5V |
-| GND | GND |
-| TX | RX PIN |
-| RX | TX PIN |
+| BME680 | Heltec | ESP8266|
+| ------ | ------ |-------|
+| 3,3V | 3,3V | 3,3V |
+| GND | GND | GND | 
+| SDA | 22 | D2 |
+| SCL | 21 | D1 |
 
-| Neopixel WS2812 | Heltec |
-| ------ | ------ |
-| GND | GND |
-| Din | 25 |
-| 3.3V | 3.3V |
+| MH-Z19B | Heltec | ESP8266
+| ------ | ------ |-------|
+| 5V | 5V | Vin
+| GND | GND | GND|
+| TX | RX PIN | RX Pin
+| RX | TX PIN | TX Pin
 
-| Touch-Button | Heltec |
-| ------ | ------ |
-| GND | GND |
-| Din | 13 |
-| 3.3V | 3.3V |
+| Neopixel WS2812 | Heltec | ESP8266
+| ------ | ------ |------ |
+| GND | GND | GND |
+| Din | 25 | D8 |
+| 3,3V | 3,3V | 3,3V|
+
+| Touch-Button | Heltec | ESP8266
+| ------ | ------ | ------|
+| GND | GND | GND |
+| Din | 13 | D7 |
+| 3,3V | 3,3V | 3,3V
 
 **Kabelfarben:**
 
