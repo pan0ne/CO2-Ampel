@@ -77,9 +77,12 @@ Achtung: Es befinden sich weitere Gehäuseteile für die WiFi Variante im Verzei
 
 **Fritzing für ESP32 (Heltec Wifi LoRa v2)**
 
-![CO2-Ampel_3DModel](images/CO2Ampel_WiringDiagram.png)
+![CO2-Ampel_Schema](images/CO2Ampel_WiringDiagram.png)
 
 **Fritzing für ESP8266 (Amica)**
+
+![CO2-Ampel_ESP8266_Schema](images/Schema_ESP8266.jpeg)
+
 
 
 
