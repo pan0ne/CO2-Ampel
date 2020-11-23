@@ -34,9 +34,10 @@ Achtung: Es befinden sich weitere Gehäuseteile für die WiFi Variante im Verzei
 - Alternative: https://resource.heltec.cn/download/package_heltec_esp32_index.json (newer and more examples)
 - https://dl.espressif.com/dl/package_esp32_index.json
 
+**Boardmanager for ESP8266 Mikrocontroller:**
+http://arduino.esp8266.com/stable/package_esp8266com_index.json
+
 **Wiring/Verkabelung:**
-
-
 
 | BME680 | Heltec | ESP8266|
 | ------ | ------ |-------|
