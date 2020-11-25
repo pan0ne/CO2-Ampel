@@ -14,9 +14,9 @@
 - https://www.bluedot.space/sensor-boards/bme680/
 - Quelle: https://www.exp-tech.de/sensoren/temperatur/8371/bluedot-bme680-breakout-board-temperatur-feuchte-luftdruck-und-gas (21,40€ DE Versand)
 
-- **Alternative CSS811 Sensor:** 
- - https://www.conrad.de/de/p/joy-it-sen-ccs811v1-sensor-modul-1884871.html (17,54)€
- - https://www.banggood.com/CCS811-Carbon-Dioxide-CO2-Temperature-And-Humidity-Sensor-VOCs-Air-quality-Monitor-Sensor-Module-p-1416441.html?rmmds=detail-left-hotproducts__1&cur_warehouse=CN (12€)
+- **Alternative BME680 (CJMCU) Sensor:** 
+ - https://www.banggood.com/CJMCU-680-BME680-BOSCH-Temperature-And-Humidity-Pressure-Sensor-p-1268323.html?cur_warehouse=CN (ca. 10€)
+ - 
  
 **MH-Z19B CO2 Sensor (RX, TX), Serial**
 - Docs: https://www.winsen-sensor.com/d/files/infrared-gas-sensor/mh-z19b-co2-ver1_0.pdf
@@ -29,6 +29,8 @@
 - Quelle (die günstige Variante): https://de.banggood.com/1M-WS2812-IC-SMD5050-Dream-Color-RGB-Non-Waterproof-LED-Strip-Light-Individual-Addressable-DC5V-p-1139749.html?akmClientCountry=DE&rmmds=cart_middle_products&ID=224&cur_warehouse=CN (5,12€, Versand aus China oder Spanien) 
 Quelle: https://www.banggood.com/4-PCS-PandaRC-5V-RGB-WS2812-LED-Strip-w-or-100mm-Cable-for-F3-F4-Flight-Controller-RC-Drone-FPV-Racing-p-1672588.html
 (6€)
+- https://www.banggood.com/Lantian-2-in-1-WS2812B-LED-And-5V-Active-Buzzer-For-FPV-NAZE32-Skyline32-Flight-Controller-p-1012950.html?rmmds=detail-left-hotproducts__2&cur_warehouse=CN
+(8 x WS2812B LED And 5V Active Buzzer, ca 4€)
 
 
 Sicher können hier auch andere Neopixelvarianten benutzt werden. Es gibt kleine 8 Pixelstreifen auch für 3 €uro im Netz zu finden.
