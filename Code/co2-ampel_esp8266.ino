@@ -17,7 +17,7 @@
   MH-Z19b_TX - RX Pin 
  
   Neopixel Pin -> ESP8266_amica:
-  Di - D5 (GPIO 25)
+  Di - D7 (GPIO 25)
   
   BME680 Pins -> ESP8266_amica:
   SDA - D2 (GPIO 2)
@@ -114,7 +114,7 @@ void logo()
 
  ****************************************************************************/
 
-#define PIN       8
+#define PIN       7
 #define NUMPIXELS 8 // Anzahl der Pixel
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
