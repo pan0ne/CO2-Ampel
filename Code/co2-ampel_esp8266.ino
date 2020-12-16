@@ -17,7 +17,7 @@
   MH-Z19b_TX - RX Pin 
  
   Neopixel Pin -> ESP8266_amica:
-  Di - D7 (GPIO 25)
+  Di - D5 (GPIO 25)
   
   BME680 Pins -> ESP8266_amica:
   SDA - D2 (GPIO 2)
@@ -63,10 +63,10 @@ String myStatus = "";
     CO2 Sensor
  ****************************************************************************/
 unsigned long getDataTimer = 0;
-#define RX_PIN 3                                         // Rx pin which the MHZ19 Tx pin is attached to
-#define TX_PIN 1                                         // Tx pin which the MHZ19 Rx pin is attached to
-#define BAUDRATE 9600                                      // Device to MH-Z19 Serial baudrate (should not be changed)
-MHZ19 myMHZ19;                                             // Constructor for library
+#define RX_PIN 13       // Rx pin (D7) which the MHZ19 Tx pin is attached to
+#define TX_PIN 15       // Tx pin (D8) which the MHZ19 Rx pin is attached to
+#define BAUDRATE 9600   // Device to MH-Z19 Serial baudrate (should not be changed)
+MHZ19 myMHZ19;          // Constructor for library
 //SoftwareSerial Serial2(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
 HardwareSerial mySerial(1); 
 int8_t Temp;
@@ -114,7 +114,7 @@ void logo()
 
  ****************************************************************************/
 
-#define PIN       7
+#define PIN       14 // Pin - auf dem Heltec LoRa Wifi v2 ist es Pin 25
 #define NUMPIXELS 8 // Anzahl der Pixel
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
@@ -147,7 +147,7 @@ void colorWipe(uint32_t color, int wait) {
 
  ****************************************************************************/
 
-#define T4  7 // GPIO 10
+#define T4  10 // GPIO 10
 
 /***************************************************************************
     Setup
@@ -155,16 +155,28 @@ void colorWipe(uint32_t color, int wait) {
  ****************************************************************************/
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
   
   WiFi.mode(WIFI_STA); 
+  WiFi.begin(ssid, pass);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+  String ipString = WiFi.localIP().toString();
   Wire.begin();
-  bme.begin();
+  //bme.begin();
  
-    /*if (!bme.begin()) {
+    if (!bme.begin()) {
       Serial.println("Could not find a valid BME680 sensor, check wiring!");
       while (1);
-    } else Serial.println("Found a sensor");*/
+    } else Serial.println("Found a sensor");
 
   // Set up oversampling and filter initialization
   bme.setTemperatureOversampling(BME680_OS_8X);
@@ -177,7 +189,7 @@ void setup()
   GetGasReference();
 
   colorWipe(pixels.Color(  0, 150,   150), 40); // Blue
-   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  //SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   
   // Initialising the UI will init the display too.
   display.init();
@@ -202,10 +214,11 @@ void setup()
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);
   display.drawString(60, 0, "WiFi verbunden");
+display.drawString(60,20, String(ipString)); 
   display.display();
   delay(3000);
 
-SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
+  //SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
   myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin(). 
   myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
 
@@ -275,7 +288,7 @@ void loop()
 
 void readMHZ19b()
 {
-  const int INTERVAL = 2000;
+  const int INTERVAL = 3000;
   static unsigned long previousMillis;
   static int counter;
 
