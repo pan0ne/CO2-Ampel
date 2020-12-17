@@ -63,12 +63,13 @@ String myStatus = "";
     CO2 Sensor
  ****************************************************************************/
 unsigned long getDataTimer = 0;
+
 #define RX_PIN 13       // Rx pin (D7) which the MHZ19 Tx pin is attached to
-#define TX_PIN 15       // Tx pin (D8) which the MHZ19 Rx pin is attached to
+#define TX_PIN 12      // Tx pin (D8) which the MHZ19 Rx pin is attached to
 #define BAUDRATE 9600   // Device to MH-Z19 Serial baudrate (should not be changed)
 MHZ19 myMHZ19;          // Constructor for library
-//SoftwareSerial Serial2(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
-HardwareSerial mySerial(1); 
+SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
+//HardwareSerial mySerial(1); 
 int8_t Temp;
 int CO2;
 
@@ -114,7 +115,7 @@ void logo()
 
  ****************************************************************************/
 
-#define PIN       14 // Pin - auf dem Heltec LoRa Wifi v2 ist es Pin 25
+#define PIN       6 // Pin - auf dem Heltec LoRa Wifi v2 ist es Pin 25
 #define NUMPIXELS 8 // Anzahl der Pixel
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
@@ -171,11 +172,10 @@ void setup()
   Serial.println(WiFi.localIP());
   String ipString = WiFi.localIP().toString();
   Wire.begin();
-  //bme.begin();
+  bme.begin();
  
     if (!bme.begin()) {
       Serial.println("Could not find a valid BME680 sensor, check wiring!");
-      while (1);
     } else Serial.println("Found a sensor");
 
   // Set up oversampling and filter initialization
@@ -219,9 +219,10 @@ display.drawString(60,20, String(ipString));
   delay(3000);
 
   //SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
-  myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin(). 
-  myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
-
+  //myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin(). 
+  //myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
+    mySerial.begin(BAUDRATE);                                   // Uno Example: Begin Stream with MHZ19 baudrate
+    myMHZ19.begin(mySerial); 
 }
 
 
@@ -240,12 +241,13 @@ void loop()
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_24);
   readMHZ19b();
+  //CO2 = myMHZ19.getCO2();           // Request CO2 (as ppm)    
   display.drawString(10, 30, String(CO2));
   display.display();
   co2Warnung();
 
 
-  if (digitalRead(T4) == 1){
+ // if (digitalRead(T4) == 1){
     display.clear();
     display.setTextAlignment(TEXT_ALIGN_LEFT);
     display.setFont(ArialMT_Plain_10);
@@ -262,7 +264,7 @@ void loop()
     if ((getgasreference_count++) % 5 == 0) GetGasReference();
    display.display();
    delay(3000);   
-  };  // get value using T4 Touch Sensor
+  //};  // get value using T4 Touch Sensor
 
   // set the fields with the values
   ThingSpeak.setField(1, CO2);
@@ -305,9 +307,9 @@ void readMHZ19b()
     
     Temp = myMHZ19.getTemperature();   // Request Temperature (as Celsius)
     Serial.print(F("Temp: "));
-    Serial.println(CO2);      
+    Serial.println(Temp);      
 
-    //counter++;
+    counter++;
     
      if (counter > 10){
        counter = 0;
@@ -335,13 +337,13 @@ void co2Warnung()
 
 void GetGasReference() {
   // Now run the sensor for a burn-in period, then use combination of relative humidity and gas resistance to estimate indoor air quality as a percentage.
-  //Serial.println("Getting a new gas reference value");
+  Serial.println("Getting a new gas reference value");
   int readings = 10;
   for (int i = 1; i <= readings; i++) { // read gas for 10 x 0.150mS = 1.5secs
     gas_reference += bme.readGas();
   }
   gas_reference = gas_reference / readings;
-  //Serial.println("Gas Reference = "+String(gas_reference,3));
+  Serial.println("Gas Reference = "+String(gas_reference,3));
 }
 
 String CalculateIAQ(int score) {
@@ -353,7 +355,7 @@ String CalculateIAQ(int score) {
   else if (score >= 151 && score <= 175 ) IAQ_text += "Unhealthy for Sensitive Groups";
   else if (score >=  51 && score <= 150 ) IAQ_text += "Moderate";
   else if (score >=  00 && score <=  50 ) IAQ_text += "Good";
-  //display.write(5, 44, "IAQ Score = " + String(score) + ", ");
+  display.drawString(5, 44, "IAQ Score = " + String(score) + ", ");
   return IAQ_text;
 }
 
