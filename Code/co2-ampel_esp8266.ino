@@ -30,6 +30,9 @@
 #include <Arduino.h>
 #include "SSD1306Wire.h"
 #include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+  #include <avr/power.h>
+#endif
 #include "images.h"
 #include "config.h"
 #include "MHZ19.h"
@@ -115,7 +118,7 @@ void logo()
 
  ****************************************************************************/
 
-#define PIN       6 // Pin - auf dem Heltec LoRa Wifi v2 ist es Pin 25
+#define PIN       2 // Pin - auf dem Heltec LoRa Wifi v2 ist es Pin 25
 #define NUMPIXELS 8 // Anzahl der Pixel
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
@@ -157,6 +160,12 @@ void colorWipe(uint32_t color, int wait) {
 void setup()
 {
   Serial.begin(9600);
+  
+  #if defined (__AVR_ATtiny85__)
+  if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
+  #endif
+  
+  pixels.begin(); 
   
   WiFi.mode(WIFI_STA); 
   WiFi.begin(ssid, pass);
