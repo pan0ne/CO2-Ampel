@@ -1,5 +1,6 @@
 /***************************************************************************
-                    Voreinstellungen und Verbindungsdaten
+                          ESP8266 Wifi Controller
+                   Voreinstellungen und Verbindungsdaten
  ****************************************************************************/
 #define SECRET_SSID "MySSID"    // SSID des WLAN
 #define SECRET_PASS "MyPassword"  // PSW 
@@ -8,7 +9,7 @@
 #define SECRET_WRITE_APIKEY "XYZ"   // thingspeak channel write API Key
 
 /***************************************************************************
-                         HelTec LoRa Controller
+                         ESP32 HelTec LoRa Controller
     Go to your TTN console register a device then the copy fields
  ****************************************************************************/
 const char* devEui = "xxxxxxx"; // Change to TTN Device EUI
