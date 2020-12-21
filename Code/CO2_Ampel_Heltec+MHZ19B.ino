@@ -166,7 +166,7 @@ void colorWipe(uint32_t color, int wait) {
  ****************************************************************************/
 void setup()
 {
-   /* Wire.begin();*/
+   /* Wire.begin(); */
    /* if (!bme.begin()) {
       Serial.println("Could not find a valid BME680 sensor, check wiring!");
       while (1);
@@ -180,7 +180,7 @@ void setup()
   bme.setGasHeater(320, 150); // 320°C for 150 ms
   // Now run the sensor to normalise the readings, then use combination of relative humidity and gas resistance to estimate indoor air quality as a percentage.
   // The sensor takes ~30-mins to fully stabilise
-  GetGasReference();
+  GetGasReference();*/
 
   Heltec.begin(true /*DisplayEnable Enable*/, true /*Heltec.Heltec.Heltec.LoRa Disable*/, true /*Serial Enable*/, true /*PABOOST Enable*/, BAND /*long BAND*/);
   Serial.begin(115200);
