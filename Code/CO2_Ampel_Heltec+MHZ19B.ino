@@ -1,27 +1,13 @@
 /*
-  CO2 Ampel
-  Dies ist ein Beispiel Arduino Sketch für eine CO2 Ampel. 
-  
-  Notice:
-  The onboard OLED display is SSD1306 driver and I2C interface. In order to make the
-  OLED correctly operation, you should output a high-low-high(1-0-1) signal by soft-
-  ware to OLED's reset pin, the low-level signal at least 5ms.
-
-  OLED Pins -> ESP32:
-  OLED_SDA -- GPIO4
-  OLED_SCL -- GPIO15
-  OLED_RST -- GPIO16
-  
-  MH-Z19b Pins -> ESP32:
-  MH-Z19b_RX - TX Pin (GPIO 1)
-  MH-Z19b_TX - RX Pin (GPIO 3) 
-  */
+  CO2 Meter (Heltec WiFi LoRa v2 + MHZ-19B CO2 Sensor)
+*/
   
 #include <Arduino.h>
 #include <TTN_esp32.h>
 #include "TTN_CayenneLPP.h"
 #include "heltec.h"
 #include "images.h"
+#include "config.h"
 #include "MHZ19.h"
 
 
@@ -33,19 +19,13 @@ unsigned long getDataTimer = 0;
 #define TX_PIN 1                                         // Tx pin which the MHZ19 Rx pin is attached to
 #define BAUDRATE 9600                                      // Device to MH-Z19 Serial baudrate (should not be changed)
 MHZ19 myMHZ19;                                             // Constructor for library
-//SoftwareSerial Serial2(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
 HardwareSerial mySerial(1); 
 int8_t Temp;
 int CO2;
 
 /***************************************************************************
-    Go to your TTN console register a device then the copy fields
-    and replace the CHANGE_ME strings below
+  LoRa (Verbindungsdaten und Bandinfo liegen in config.h)
  ****************************************************************************/
-const char* devEui = "xxx"; // Change to TTN Device EUI
-const char* appEui = "xxx"; // Change to TTN Application EUI
-const char* appKey = "xxx"; // Chaneg to TTN Application Key
-#define BAND    868E6  //you can set band here directly,e.g. 868E6,915E6
 
 unsigned int counter = 0;
 String rssi = "RSSI --";
@@ -56,8 +36,7 @@ TTN_esp32 ttn ;
 TTN_CayenneLPP lpp;
 
 /***************************************************************************
-    Debug LORA Info
-
+  Debug LORA Info
  ****************************************************************************/
 void message(const uint8_t* payload, size_t size, int rssi)
 {
@@ -66,7 +45,7 @@ void message(const uint8_t* payload, size_t size, int rssi)
   for (int i = 0; i < size; i++)
   {
     Serial.print(" " + String(payload[i]));
-    // Serial.write(payload[i]);
+    Serial.write(payload[i]);
   }
 
   Serial.println();
@@ -90,20 +69,16 @@ void logo()
 }
 
 /***************************************************************************
-    Setup
-
+                                      Setup
  ****************************************************************************/
 void setup()
 {
-
   Heltec.begin(true /*DisplayEnable Enable*/, true /*Heltec.Heltec.Heltec.LoRa Disable*/, true /*Serial Enable*/, true /*PABOOST Enable*/, BAND /*long BAND*/);
   Serial.begin(115200);
-  
   Heltec.display->init();
   Heltec.display->flipScreenVertically();
-  
   logo();
-  
+
   Heltec.display->clear();
   Heltec.display->setFont(ArialMT_Plain_16);
   Heltec.display->drawString(25, 10, "LoRa TTN");
@@ -120,28 +95,34 @@ void setup()
   
   while (!ttn.isJoined() && millis() < 10000)
   {
-    ttn.showStatus();
-    Heltec.display->clear();
-    Heltec.display->setFont(ArialMT_Plain_10);
-    Heltec.display->drawString(20, 20, "Verbinde zu TTN");
-    Heltec.display->drawString(30, 40, "Bitte warten...");
-    Heltec.display->display();
-    delay(1000);
-  }
-  Serial.println("LoRa init succeeded.");  
+  ttn.showStatus();
+  Heltec.display->clear();
+  Heltec.display->setFont(ArialMT_Plain_10);
+  Heltec.display->drawString(20, 20, "Verbinde zu TTN");
+  Heltec.display->drawString(30, 40, "Bitte warten...");
+  Heltec.display->display();
+  delay(1000);
+}
+
+  Serial.println("LoRa init succeeded.");
+  
   Heltec.display->clear();
   Heltec.display->setFont(ArialMT_Plain_16);
   Heltec.display->drawString(5, 30, "TTN verbunden");
   Heltec.display->display();
   delay(3000);
-  
+  logo();
   ttn.showStatus();
 
   mySerial.begin(BAUDRATE, SERIAL_8N1, RX_PIN, TX_PIN); // (ESP32 Example) device to MH-Z19 serial start   
   myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin(). 
   myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
+
 }
 
+/***************************************************************************
+                                      Loop
+ ****************************************************************************/
 void loop()
 {
   Heltec.display->clear();
@@ -175,6 +156,13 @@ void loop()
       }
 
   counter++;
+
+  /*  
+  Notice:
+  The onboard OLED display is SSD1306 driver and I2C interface. In order to make the
+  OLED correctly operation, you should output a high-low-high(1-0-1) signal by soft-
+  ware to OLED's reset pin, the low-level signal at least 5ms.
+   */
   digitalWrite(LED, LOW);    // turn the LED off by making the voltage LOW
   delay(2000); 
   digitalWrite(LED, HIGH);   // turn the LED on (HIGH is the voltage level)
@@ -183,11 +171,14 @@ void loop()
   delay(2000);                       // wait for a second
 }
 
+
+/***************************************************************************
+                                      Sensor
+ ****************************************************************************/
 void readMHZ19b()
 {
   const int INTERVAL = 2000;
   static unsigned long previousMillis;
-  static int counter;
 
   if (millis() - previousMillis > INTERVAL)
   {
@@ -203,13 +194,5 @@ void readMHZ19b()
     Temp = myMHZ19.getTemperature();   // Request Temperature (as Celsius)
     Serial.print(F("Temp: "));
     Serial.println(CO2);      
-
-    //counter++;
-    
-     if (counter > 10){
-       counter = 0;
-      }
-
-      return;
   }
 }
