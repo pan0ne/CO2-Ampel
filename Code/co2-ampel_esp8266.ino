@@ -94,6 +94,7 @@ float hum_reference = 40;
 int   getgasreference_count = 0;
 int   gas_lower_limit = 10000;  // Bad air quality limit
 int   gas_upper_limit = 300000; // Good air quality limit
+String  air_quality;
 
 
 /***************************************************************************
@@ -166,20 +167,6 @@ void setup()
   #endif
   
   pixels.begin(); 
-  
-  WiFi.mode(WIFI_STA); 
-  WiFi.begin(ssid, pass);
-  
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-  String ipString = WiFi.localIP().toString();
   Wire.begin();
   bme.begin();
  
@@ -217,13 +204,26 @@ void setup()
   logo();
   colorWipe(pixels.Color(  255, 71,   0), 40); // Orange
 
-  ThingSpeak.begin(client);  // Initialize ThingSpeak
-  colorWipe(pixels.Color(  0, 150,   0), 70); // Green
+WiFi.mode(WIFI_STA); 
+  WiFi.begin(ssid, pass);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+  String ipString = WiFi.localIP().toString();
+  
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);
   display.drawString(60, 0, "WiFi verbunden");
-display.drawString(60,20, String(ipString)); 
+  colorWipe(pixels.Color(  0, 150,   0), 70); // Green
+  display.drawString(60,20, String(ipString)); 
   display.display();
   delay(3000);
 
@@ -232,6 +232,9 @@ display.drawString(60,20, String(ipString));
   //myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
     mySerial.begin(BAUDRATE);                                   // Uno Example: Begin Stream with MHZ19 baudrate
     myMHZ19.begin(mySerial); 
+
+  ThingSpeak.begin(client);  // Initialize ThingSpeak
+  delay(3000);
 }
 
 
@@ -242,7 +245,7 @@ void loop()
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_24);
-  display.drawString(60, 0, "CO2");
+  display.drawXbm(60, 0, co2_width, co2_height, co2_sym);
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_16);
   display.drawString(120, 40, " ppm");
@@ -263,14 +266,19 @@ void loop()
     display.drawString(5, 2, " Temperature = " + String(bme.readTemperature(), 2)     + "°C");
     display.drawString(5, 12, " Pressure = " + String(bme.readPressure() / 100.0F) + " hPa");
     display.drawString(5, 22, " Humidity = " + String(bme.readHumidity(), 1)        + "%");
-    display.drawString(5, 33, " Gas = " + String(gas_reference)               + " ohms\n");
    
     humidity_score = GetHumidityScore();
     gas_score      = GetGasScore();
+   
   
     //Combine results for the final IAQ index value (0-100% where 100% is good quality air)
     float air_quality_score = humidity_score + gas_score;
     if ((getgasreference_count++) % 5 == 0) GetGasReference();
+    
+    air_quality      = CalculateIAQ(air_quality_score);
+    
+    display.drawString(5, 33, String(air_quality));
+
    display.display();
    delay(3000);   
   //};  // get value using T4 Touch Sensor
@@ -279,7 +287,7 @@ void loop()
   ThingSpeak.setField(1, CO2);
   ThingSpeak.setField(2, bme.readTemperature());
   ThingSpeak.setField(3, bme.readHumidity());
-  ThingSpeak.setField(4, gas_score );
+  ThingSpeak.setField(4, air_quality_score);
   
   // set the status
   ThingSpeak.setStatus(myStatus);
@@ -356,14 +364,14 @@ void GetGasReference() {
 }
 
 String CalculateIAQ(int score) {
-  String IAQ_text = "air is ";
+  String IAQ_text = "Air is ";
   score = (100 - score) * 5;
-  if      (score >= 301)                  IAQ_text += "Hazardous";
-  else if (score >= 201 && score <= 300 ) IAQ_text += "Very Unhealthy";
-  else if (score >= 176 && score <= 200 ) IAQ_text += "Unhealthy";
-  else if (score >= 151 && score <= 175 ) IAQ_text += "Unhealthy for Sensitive Groups";
-  else if (score >=  51 && score <= 150 ) IAQ_text += "Moderate";
-  else if (score >=  00 && score <=  50 ) IAQ_text += "Good";
+  if      (score >= 301)                  IAQ_text += "Schädlich";
+  else if (score >= 201 && score <= 300 ) IAQ_text += "Sehr Ungesund";
+  else if (score >= 176 && score <= 200 ) IAQ_text += "Ungesund";
+  else if (score >= 151 && score <= 175 ) IAQ_text += "Nichts für Ältere";
+  else if (score >=  51 && score <= 150 ) IAQ_text += "OK";
+  else if (score >=  00 && score <=  50 ) IAQ_text += "Gut";
   display.drawString(5, 44, "IAQ Score = " + String(score) + ", ");
   return IAQ_text;
 }
