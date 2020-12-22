@@ -221,7 +221,7 @@ WiFi.mode(WIFI_STA);
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);
-  display.drawString(60, 0, "WiFi verbunden");
+  display.drawString(60, 0, "IP Adresse");
   colorWipe(pixels.Color(  0, 150,   0), 70); // Green
   display.drawString(60,20, String(ipString)); 
   display.display();
@@ -275,7 +275,7 @@ void loop()
     float air_quality_score = humidity_score + gas_score;
     if ((getgasreference_count++) % 5 == 0) GetGasReference();
     
-    air_quality      = CalculateIAQ(air_quality_score);
+    air_quality = CalculateIAQ(air_quality_score);
     
     display.drawString(5, 33, String(air_quality));
 
@@ -340,13 +340,35 @@ void co2Warnung()
         if(CO2 < 850) {
           colorWipe(pixels.Color(  0, 255,   0), 150); // Green
         } else {
-        if(CO2 < 1400) {
+        if(CO2 < 1500) {
           colorWipe(pixels.Color(  150, 150,   0), 150); // Yellow
+           if((CO2 > 1400) && (CO2 < 1500 )) {
+            tone(14, 800); // …spiele diesen Ton...
+            delay(100); //…und zwar für eine Sekunde...
+            tone(14, 600); // …spiele diesen Ton...
+            delay(200); //…und zwar für eine Sekunde...
+            tone(14, 400); // …spiele diesen Ton...
+            delay(300); //…und zwar für eine Sekunde...        
+            noTone(14); // Ton abschalten
+            }
         } else {         
-        if(CO2 < 1800) {
+        if(CO2 < 2000) {
            colorWipe(pixels.Color(  255, 71,   0), 40); // Orange
+            if((CO2 > 1900) && (CO2 < 2000 )) {
+            tone(14, 800); // …spiele diesen Ton...
+            delay(100); //…und zwar für eine Sekunde...
+            tone(14, 600); // …spiele diesen Ton...
+            delay(200); //…und zwar für eine Sekunde...
+            tone(14, 400); // …spiele diesen Ton...
+            delay(300); //…und zwar für eine Sekunde...        
+            noTone(14); // Ton abschalten
+            }
         } else {
-            colorWipe(pixels.Color(255,   0,   0), 150); // Red
+            //colorWipe(pixels.Color(255,   0,   0), 150); // Red
+            rainbow(10);
+            tone(14, 600); // …spiele diesen Ton...
+            delay(200); //…und zwar für eine Sekunde...
+            noTone(14); // Ton abschalten
             }
           }
         }
