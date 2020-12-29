@@ -244,29 +244,40 @@ void loop()
   Serial.println(digitalRead(T4));  // get value using T4 Touch Sensor
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
-  display.setFont(ArialMT_Plain_24);
-  display.drawXbm(60, 0, co2_width, co2_height, co2_sym);
+  display.setFont(ArialMT_Plain_16);
+  //display.drawXbm(60, 0, co2_width, co2_height, co2_sym);
+  display.drawString(60, 0, "CO2 Meter"); 
+
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(5, 50, String(bme.readTemperature(), 2)     + "°C");
+
+  display.setTextAlignment(TEXT_ALIGN_RIGHT);
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%");
+  
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_16);
-  display.drawString(120, 40, " ppm");
+  display.drawString(100, 23, " ppm");
   display.display();
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_24);
   readMHZ19b();
   //CO2 = myMHZ19.getCO2();           // Request CO2 (as ppm)    
-  display.drawString(10, 30, String(CO2));
+  display.drawString(25, 20, String(CO2));
+
   display.display();
   co2Warnung();
 
 
- // if (digitalRead(T4) == 1){
+ /* if (digitalRead(T4) == 1){
     display.clear();
     display.setTextAlignment(TEXT_ALIGN_LEFT);
     display.setFont(ArialMT_Plain_10);
     display.drawString(5, 2, " Temperature = " + String(bme.readTemperature(), 2)     + "°C");
     display.drawString(5, 12, " Pressure = " + String(bme.readPressure() / 100.0F) + " hPa");
     display.drawString(5, 22, " Humidity = " + String(bme.readHumidity(), 1)        + "%");
-   
+  */ 
     humidity_score = GetHumidityScore();
     gas_score      = GetGasScore();
    
@@ -276,11 +287,12 @@ void loop()
     if ((getgasreference_count++) % 5 == 0) GetGasReference();
     
     air_quality = CalculateIAQ(air_quality_score);
-    
-    display.drawString(5, 33, String(air_quality));
+    //display.setTextAlignment(TEXT_ALIGN_CENTER);
+    //display.setFont(ArialMT_Plain_10);    
+    //display.drawString(5, 33, String(air_quality));
 
-   display.display();
-   delay(3000);   
+   //display.display();
+   delay(12000);   
   //};  // get value using T4 Touch Sensor
 
   // set the fields with the values
@@ -394,7 +406,9 @@ String CalculateIAQ(int score) {
   else if (score >= 151 && score <= 175 ) IAQ_text += "Nichts für Ältere";
   else if (score >=  51 && score <= 150 ) IAQ_text += "OK";
   else if (score >=  00 && score <=  50 ) IAQ_text += "Gut";
-  display.drawString(5, 44, "IAQ Score = " + String(score) + ", ");
+  //display.setTextAlignment(TEXT_ALIGN_CENTER);
+  //display.setFont(ArialMT_Plain_10);
+  //display.drawString(60, 59, "IAQ Score = " + String(score) + ", ");
   return IAQ_text;
 }
 
