@@ -1,24 +1,23 @@
 /*
   CO2 Meter (Heltec WiFi LoRa v2 + MHZ-19B CO2 Sensor)
 */
-  
 #include <Arduino.h>
 #include <TTN_esp32.h>
 #include "TTN_CayenneLPP.h"
-#include "heltec.h"
+#include "heltec.h" 
 #include "images.h"
 #include "config.h"
 #include "MHZ19.h"
 
-
 /***************************************************************************
     CO2 Sensor
  ****************************************************************************/
+ 
 unsigned long getDataTimer = 0;
 #define RX_PIN 3                                         // Rx pin which the MHZ19 Tx pin is attached to
 #define TX_PIN 1                                         // Tx pin which the MHZ19 Rx pin is attached to
-#define BAUDRATE 9600                                      // Device to MH-Z19 Serial baudrate (should not be changed)
-MHZ19 myMHZ19;                                             // Constructor for library
+#define BAUDRATE 9600                                    // Device to MH-Z19 Serial baudrate (should not be changed)
+MHZ19 myMHZ19;                                           // Constructor for library
 HardwareSerial mySerial(1); 
 int8_t Temp;
 int CO2;
@@ -55,6 +54,7 @@ void message(const uint8_t* payload, size_t size, int rssi)
     Logo aus der images.h
     Duisentrieb Logo und Schriftzug
  ****************************************************************************/
+ 
 void logo()
 {
   Heltec.display->clear();
@@ -71,6 +71,7 @@ void logo()
 /***************************************************************************
                                       Setup
  ****************************************************************************/
+ 
 void setup()
 {
   Heltec.begin(true /*DisplayEnable Enable*/, true /*Heltec.Heltec.Heltec.LoRa Disable*/, true /*Serial Enable*/, true /*PABOOST Enable*/, BAND /*long BAND*/);
@@ -95,23 +96,25 @@ void setup()
   
   while (!ttn.isJoined() && millis() < 10000)
   {
-  ttn.showStatus();
-  Heltec.display->clear();
-  Heltec.display->setFont(ArialMT_Plain_10);
-  Heltec.display->drawString(20, 20, "Verbinde zu TTN");
-  Heltec.display->drawString(30, 40, "Bitte warten...");
-  Heltec.display->display();
-  delay(1000);
-}
+    ttn.showStatus();
+    Heltec.display->clear();
+    Heltec.display->setFont(ArialMT_Plain_10);
+    Heltec.display->drawString(20, 20, "Verbinde zu TTN");
+    Heltec.display->drawString(30, 40, "Bitte warten...");
+    Heltec.display->display();
+    delay(1000);
+  }
 
-  Serial.println("LoRa init succeeded.");
+  //Serial.println("LoRa init succeeded.");
   
   Heltec.display->clear();
   Heltec.display->setFont(ArialMT_Plain_16);
   Heltec.display->drawString(5, 30, "TTN verbunden");
   Heltec.display->display();
   delay(3000);
+  
   logo();
+  
   ttn.showStatus();
 
   mySerial.begin(BAUDRATE, SERIAL_8N1, RX_PIN, TX_PIN); // (ESP32 Example) device to MH-Z19 serial start   
