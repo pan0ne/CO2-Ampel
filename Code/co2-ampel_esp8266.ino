@@ -13,8 +13,8 @@
   OLED_RST -- RST
   
   MH-Z19b Pins -> ESP8266_amica:
-  MH-Z19b_RX - TX Pin
-  MH-Z19b_TX - RX Pin 
+  MH-Z19b_RX - D6 Pin
+  MH-Z19b_TX - D7 Pin 
  
   Neopixel Pin -> ESP8266_amica:
   Di - D5 (GPIO 25)
@@ -229,9 +229,9 @@ WiFi.mode(WIFI_STA);
 
   //SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
   //myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin(). 
-  //myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
     mySerial.begin(BAUDRATE);                                   // Uno Example: Begin Stream with MHZ19 baudrate
     myMHZ19.begin(mySerial); 
+  myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
 
   ThingSpeak.begin(client);  // Initialize ThingSpeak
   delay(3000);
@@ -258,7 +258,7 @@ void loop()
   
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_16);
-  display.drawString(100, 23, " ppm");
+  display.drawString(110, 23, " ppm");
   display.display();
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_24);
