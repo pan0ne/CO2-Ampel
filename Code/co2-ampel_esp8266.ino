@@ -255,6 +255,8 @@ void loop()
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_10);
   display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%");
+  //display.drawString(5, 50, String(Temp, 2)     + "°C");
+
   
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_16);
