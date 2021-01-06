@@ -254,9 +254,9 @@ void loop()
 
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_10);
-  display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%");
-  //display.drawString(5, 50, String(Temp, 2)     + "°C");
-
+  display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%"); // Gibt die relative Luftfeuchtigkeit des BME680 auf dem Display aus
+  //display.drawString(5, 50, String(Temp, 2)     + "°C");                 // Gibt die gemessene Temperatur des CO2 Sensors auf dem display aus
+ 
   
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_16);
