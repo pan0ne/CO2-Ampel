@@ -172,16 +172,19 @@ void setup()
  
     if (!bme.begin()) {
       Serial.println("Could not find a valid BME680 sensor, check wiring!");
-    } else Serial.println("Found a sensor");
+    } else {
+      Serial.println("Found a sensor");
+    }
 
   // Set up oversampling and filter initialization
   bme.setTemperatureOversampling(BME680_OS_8X);
   bme.setHumidityOversampling(BME680_OS_2X);
   bme.setPressureOversampling(BME680_OS_4X);
   bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
-  bme.setGasHeater(320, 150); // 320°C for 150 ms
-  // Now run the sensor to normalise the readings, then use combination of relative humidity and gas resistance to estimate indoor air quality as a percentage.
-  // The sensor takes ~30-mins to fully stabilise
+  bme.setGasHeater(320, 150); // 320*C for 150 ms
+  delay(500);
+  bme.performReading();
+  delay(500);
   GetGasReference();
 
   colorWipe(pixels.Color(  0, 150,   150), 40); // Blue
@@ -231,7 +234,7 @@ WiFi.mode(WIFI_STA);
   //myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin(). 
     mySerial.begin(BAUDRATE);                                   // Uno Example: Begin Stream with MHZ19 baudrate
     myMHZ19.begin(mySerial); 
-  myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
+  //myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
 
   ThingSpeak.begin(client);  // Initialize ThingSpeak
   delay(3000);
@@ -246,28 +249,27 @@ void loop()
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);
   //display.drawXbm(60, 0, co2_width, co2_height, co2_sym);
-  display.drawString(60, 0, "CO2 Meter"); 
+  display.drawString(65, 0, "CO2 Meter"); 
 
-  display.setTextAlignment(TEXT_ALIGN_LEFT);
-  display.setFont(ArialMT_Plain_10);
-  display.drawString(5, 50, String(bme.readTemperature(), 2)     + "°C");
-
-  display.setTextAlignment(TEXT_ALIGN_RIGHT);
-  display.setFont(ArialMT_Plain_10);
-  display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%"); // Gibt die relative Luftfeuchtigkeit des BME680 auf dem Display aus
-  //display.drawString(5, 50, String(Temp, 2)     + "°C");                 // Gibt die gemessene Temperatur des CO2 Sensors auf dem display aus
- 
-  
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_16);
-  display.drawString(110, 23, " ppm");
+  display.drawString(110, 30, " ppm");
   display.display();
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_24);
   readMHZ19b();
-  //CO2 = myMHZ19.getCO2();           // Request CO2 (as ppm)    
-  display.drawString(25, 20, String(CO2));
+  Temp = myMHZ19.getTemperature();          // Request CO2 (as ppm)    
+  display.drawString(15, 20, String(CO2));
 
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(5, 50, String(bme.readTemperature(), 1)     + " °C");
+
+  display.setTextAlignment(TEXT_ALIGN_RIGHT);
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(120, 50, String(Temp) + "°C");
+  //display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%");
+  
   display.display();
   co2Warnung();
 
