@@ -1,9 +1,9 @@
-***CO2-Messgerät/Ampel***
+# DIY CO2-Messgerät / CO2-Ampel
 
 Dieses Projekt zeigt den Bau einer CO2 Ampel.
-Benutzt wird ein **ESP8266 / ESP32** Mikrocontroller und ein **MHZ-19b CO2 Sensor**. Zusätzlich kann ein **BME680 Luftqualitätssensor** angeschlossen werden um die Messwerte zu präzisieren sowie **Neopixel (WS2812b)** und **SSD1306 Display** zur visuellen Ausgabe.  
+Als Basis benutze ich einen **ESP8266 / ESP32 Mikrocontroller** und ein **MHZ-19b CO2 Sensor**. Zusätzlich kann ein **BME680 Luftqualitätssensor** angeschlossen werden um die Messwerte zu präzisieren sowie **Neopixel (WS2812b)** und/oder ein **SSD1306 Display** zur visuellen Anzeige.  
 
-***Die CO2 Ampel erfasst:***
+***Messdaten***
 - **Temperatur (C)**
 - **Luftfeuchte (%)**
 - **CO2 (ppm)**,
@@ -14,7 +14,7 @@ Die **Sensordaten** können via **LoRa WAN** an das **thethingsnetwork.org** ges
 Zur **Analyse der Daten** werden diese an **thingsspeak.com** übertragen und grafisch aufbereitet. (Account nötig).
 Bis auf den CO2 Sensor, der mit 5V betrieben wird, reicht für alles andere 3.3V. Der CO2 Sensor wird seriell über die RX/TX Pins abgefragt. Der Luftqualitätssensor kommuniziert über den i2c bus.
 
-**3D Druckmodelle**
+**Gehäuse**
 - **Design**: TinkerCad.com
 - **Download (.stl Format)**:
 https://www.thingiverse.com/thing:4644826
