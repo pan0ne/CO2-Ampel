@@ -23,6 +23,6 @@ Download hier: https://www.thingiverse.com/thing:4644826
 - *Einstellungen*: keine Stützstrukturen
 - *Slicer*: Cura 4.8.0
 
-Eine Anleitung mit allen Angaben zur Verkabelung und Programmierung der CO2 Ampel befinden sich hier:
+Eine Anleitung mit allen Angaben zur Verkabelung und Programmierung im Github Wiki:
 
 - https://github.com/pan0ne/CO2-Ampel/wiki/Anleitung
