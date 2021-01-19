@@ -25,7 +25,7 @@ https://www.thingiverse.com/thing:4644826
 
 Eine ***Bauanleitung*** mit allen Angaben von Druck der Bauteile über Verkabelung bis Programmierung befindet sich ***im Github Wiki***:
 
-- https://github.com/pan0ne/CO2-Ampel/wiki/Anleitung
+- https://github.com/pan0ne/CO2-Ampel/wiki/Home
 
 **Videoanleitung**
 
