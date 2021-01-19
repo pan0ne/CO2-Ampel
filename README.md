@@ -4,19 +4,14 @@
 
 [Weitere Fotos in der Galerie auf Thingiverse](https://www.thingiverse.com/thing:4644826)
 
-Ziel dieses IOT-Projekt war es, einen Bausatz für ein CO2-Messgerät für den Einsatz in Schul- bzw. Klassenräumen zu entwickeln. 
-
-Das Sketch ist ein Beispiel und zeigt über die Neopixel ein Farbsignal in Form einer Farbampel an. Die genauen Sensorwerte werden zusätzlich auf einem Display ausgegeben und können über einen Touch-Button an der Gehäuseseite ausgewählt werden. 
-
-Achtung: In der aktuellen Version wird der HelTec Lora WiFi v2 als Mikrocontroller benutzt. Sensordaten werden außerdem nur per LoRaWAN übertragen. Eine WiFi Variante mit einem ESP8266 folgt.
+Dieses Projekt zeigt den Bau einer CO2 Ampel.
+Benutzt wird ein ESP8266 / ESP32 Mikrocontroller und ein MHZ-19b CO2 Sensor. Zusätzlich kann ein BME680 Luftqualitätssensor angeschlossen werden um die Messwerte zu präzisieren sowie Neopixel und Display zur visuellen Ausgabe.  
 
 Gemessen werden Temperatur (C), Feuchte (%), CO2 (ppm), Luftdruck(hPa) und die Luftqualität (flüchtige organische Verbindungen, VOC).
 
-Die Sensordaten werden außerdem via **LoRa WAN ** an thethingsnetwork übertragen und von dort aus auf thingsspeak.com grafisch aufbereitet.
+Die Sensordaten können via **LoRa WAN ** über thethingsnetwork- oder direkt per WiFi an  thingsspeak.com übertragen auf  grafisch aufbereitet werden.
 
-In weiteren Schritten soll das modular aufgebaute Gehäuse erweitert werden, um zu demonstrieren, dass die bisherigen Funktionen leicht durch andere Sensoren ergänzt oder ersetzt werden können. In Arbeit ist ein alternativer Gehäusedeckel mit größerem 1.8" TFT Diplay, welches das CO2 Symbol ersetzt und zeigt, dass das Gerät auch vertikal aufgestellt werden kann. Außerdem ist der Austausch des BlueDot Luftsensors durch einen dB Sensor geplant, damit aus einem CO2 Messgerät ohne Aufwand ein Schallpegel-Messgerät wird. Denkbar sind auch Mesh-Wegweiser oder die Erfassung der Bodenfeuchte von Klassenzimmerpflanzen.
-
-In dieser Version wird der Mikrocontroller in Verbindung mit einem günstigen MH-Z19B Infrarot CO2 Sensor und einen BME680 Luftqualitätssensor benutzt. Außerdem 8 Neopixel (WS2812b) und ein Touch-Button Sensor. Bis auf den CO2 Sensor, der mit 5V betrieben wird, reicht für alles andere 3.3V. Der CO2 Sensor wird seriell über die RX/TX Pins abgefragt. Der Luftqualitätssensor kommuniziert über den i2c bus (SDA:Pin 21, SCK:Pin 22). Die Neopixel müssen mit PIN 25 am Mikrocontroller verbunden werden. Der Touch-Button ist t4 im Sketch, aber es können auch alle anderen verwendet werden, solange dies im Sketch auch angegeben wird.
+Bis auf den CO2 Sensor, der mit 5V betrieben wird, reicht für alles andere 3.3V. Der CO2 Sensor wird seriell über die RX/TX Pins abgefragt. Der Luftqualitätssensor kommuniziert über den i2c bus. 
 
 **Gehäuse** (Alle Bauteile wurden mit TinkerCad.com entworfen)
 
@@ -42,7 +37,7 @@ http://arduino.esp8266.com/stable/package_esp8266com_index.json
 | BME680 | Heltec | ESP8266|
 | ------ | ------ |-------|
 | 3,3V | 3,3V | 3,3V |
-| GND | GND | GND | 
+| GND | GND | GND |
 | SDA | 22 | D2 |
 | SCL | 21 | D1 |
 
@@ -69,7 +64,7 @@ http://arduino.esp8266.com/stable/package_esp8266com_index.json
 
 - 5V / GND = rot/schwarz
 - 3.3V / GND = weiß/schwarz
-- i2c sda = blau 
+- i2c sda = blau
 - i2c sck = grün
 - Seriell RX = orange
 - Seriell TX = gelb
@@ -83,7 +78,3 @@ http://arduino.esp8266.com/stable/package_esp8266com_index.json
 **Fritzing für ESP8266 (Amica)**
 
 ![CO2-Ampel_ESP8266_Schema](Docs/Schema_ESP8266.jpeg)
-
-
-
-
