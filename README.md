@@ -1,7 +1,7 @@
 ***CO2-Messgerät/Ampel***
 
 Dieses Projekt zeigt den Bau einer CO2 Ampel.
-Benutzt wird ein **ESP8266 / ESP32** Mikrocontroller und ein **MHZ-19b CO2 Sensor**. Zusätzlich kann ein **BME680 Luftqualitätssensor** angeschlossen werden um die Messwerte zu präzisieren sowie**Neopixel** und **SSD1306 Display** zur visuellen Ausgabe.  
+Benutzt wird ein **ESP8266 / ESP32** Mikrocontroller und ein **MHZ-19b CO2 Sensor**. Zusätzlich kann ein **BME680 Luftqualitätssensor** angeschlossen werden um die Messwerte zu präzisieren sowie **Neopixel (WS2812b)** und **SSD1306 Display** zur visuellen Ausgabe.  
 
 ***Die CO2 Ampel erfasst:***
 - **Temperatur (C)**
