@@ -15,20 +15,17 @@ Benutzt wird ein **ESP8266 / ESP32** Mikrocontroller und ein **MHZ-19b CO2 Senso
 - **Luftqualität (VOC, flüchtige organische Verbindungen)**.
 
 Die **Sensordaten** können via **LoRa WAN** an das **thethingsnetwork.org** gesendet werden, oder direkt per **WiFi**.
-Zur **Analyse der Daten** werden diese an **thingsspeak.com** übertragen und grafisch aufbereitet. (Account nötig)
-
+Zur **Analyse der Daten** werden diese an **thingsspeak.com** übertragen und grafisch aufbereitet. (Account nötig).
 Bis auf den CO2 Sensor, der mit 5V betrieben wird, reicht für alles andere 3.3V. Der CO2 Sensor wird seriell über die RX/TX Pins abgefragt. Der Luftqualitätssensor kommuniziert über den i2c bus.
 
 **3D Druckmodelle**
-- Design: TinkerCad.com
-- Download:
+- **Design**: TinkerCad.com
+- **Download (.stl Format)**:
 https://www.thingiverse.com/thing:4644826
-
-
-- *Material*:   PLA (Sunlu), Holzoptik, carbonschwarz, transparent
-- *Temperatur*: 195°C Noozle / Heizbett 58°
-- *Einstellungen*: keine Stützstrukturen
-- *Slicer*: Cura 4.8.0
+- **Material**:   PLA (Sunlu), Holzoptik, carbonschwarz, transparent
+- **Temperatur**: 195°C Noozle / Heizbett 58°
+- **Einstellungen**: keine Stützstrukturen
+- **Slicer**: Cura 4.8.0
 
 Eine ***Bauanleitung*** mit allen Angaben von Druck der Bauteile über Verkabelung bis Programmierung befindet sich ***im Github Wiki***:
 
