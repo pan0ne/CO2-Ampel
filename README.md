@@ -11,7 +11,7 @@ Gemessen werden Temperatur (C), Feuchte (%), CO2 (ppm), Luftdruck(hPa) und die L
 
 Die Sensordaten können via **LoRa WAN ** über thethingsnetwork- oder direkt per WiFi an  thingsspeak.com übertragen auf  grafisch aufbereitet werden.
 
-Bis auf den CO2 Sensor, der mit 5V betrieben wird, reicht für alles andere 3.3V. Der CO2 Sensor wird seriell über die RX/TX Pins abgefragt. Der Luftqualitätssensor kommuniziert über den i2c bus. 
+Bis auf den CO2 Sensor, der mit 5V betrieben wird, reicht für alles andere 3.3V. Der CO2 Sensor wird seriell über die RX/TX Pins abgefragt. Der Luftqualitätssensor kommuniziert über den i2c bus.
 
 **Gehäuse** (Alle Bauteile wurden mit TinkerCad.com entworfen)
 
@@ -77,4 +77,4 @@ http://arduino.esp8266.com/stable/package_esp8266com_index.json
 
 **Fritzing für ESP8266 (Amica)**
 
-![CO2-Ampel_ESP8266_Schema](Docs/Schema_ESP8266.jpeg)
+![CO2-Ampel_ESP8266_Schema](images/Schema_ESP8266.jpeg)
