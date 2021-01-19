@@ -1,7 +1,7 @@
 /*
   CO2 Ampel
-  Dies ist ein Beispiel Arduino Sketch für eine CO2 Ampel für einen ESP8266 NodeMCU/Amica. 
-  
+  Dies ist ein Beispiel Arduino Sketch für eine CO2 Ampel für einen ESP8266 NodeMCU/Amica.
+
   Notice:
   The onboard OLED display is SSD1306 driver and I2C interface. In order to make the
   OLED correctly operation, you should output a high-low-high(1-0-1) signal by soft-
@@ -11,21 +11,24 @@
   OLED_SDA -- D2
   OLED_SCL -- D1
   OLED_RST -- RST
-  
+
   MH-Z19b Pins -> ESP8266_amica:
   MH-Z19b_RX - D6 Pin
-  MH-Z19b_TX - D7 Pin 
- 
+  MH-Z19b_TX - D7 Pin
+
   Neopixel Pin -> ESP8266_amica:
   Di - D5 (GPIO 25)
-  
+
   BME680 Pins -> ESP8266_amica:
   SDA - D2 (GPIO 2)
   SCL - D1 (GPIO 1)
-  
+
   Touch Button Pin -> ESP8266:
-  Di - D10 (GPIO 10)  
-  
+  Di - D10 (GPIO 10)
+
+  untere Reihe: v.l n.r: LED-> 5V; LED-> GND; 3x frei; MHZ19B->Tx;MHZ19B->Rx; 3x frei; LED-> Din; frei; BME680->SDA; BME680->SCL 
+  obere Reihe v.l.n.r: 5V; GND; frei; frei; BME680->VCC; BME680->GND
+
   */
 #include <Arduino.h>
 #include "SSD1306Wire.h"
@@ -52,7 +55,7 @@ SSD1306Wire display(0x3c, SDA, SCL);
 /***************************************************************************
     WiFi und thingspeak
  ****************************************************************************/
-char ssid[] = SECRET_SSID;   // your network SSID (name) 
+char ssid[] = SECRET_SSID;   // your network SSID (name)
 char pass[] = SECRET_PASS;   // your network password
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 WiFiClient  client;
@@ -72,7 +75,7 @@ unsigned long getDataTimer = 0;
 #define BAUDRATE 9600   // Device to MH-Z19 Serial baudrate (should not be changed)
 MHZ19 myMHZ19;          // Constructor for library
 SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
-//HardwareSerial mySerial(1); 
+//HardwareSerial mySerial(1);
 int8_t Temp;
 int CO2;
 
@@ -161,15 +164,15 @@ void colorWipe(uint32_t color, int wait) {
 void setup()
 {
   Serial.begin(9600);
-  
+
   #if defined (__AVR_ATtiny85__)
   if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
   #endif
-  
-  pixels.begin(); 
+
+  pixels.begin();
   Wire.begin();
   bme.begin();
- 
+
     if (!bme.begin()) {
       Serial.println("Could not find a valid BME680 sensor, check wiring!");
     } else {
@@ -189,7 +192,7 @@ void setup()
 
   colorWipe(pixels.Color(  0, 150,   150), 40); // Blue
   //SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-  
+
   // Initialising the UI will init the display too.
   display.init();
 
@@ -207,9 +210,9 @@ void setup()
   logo();
   colorWipe(pixels.Color(  255, 71,   0), 40); // Orange
 
-WiFi.mode(WIFI_STA); 
+WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
-  
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -220,20 +223,20 @@ WiFi.mode(WIFI_STA);
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
   String ipString = WiFi.localIP().toString();
-  
+
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);
   display.drawString(60, 0, "IP Adresse");
   colorWipe(pixels.Color(  0, 150,   0), 70); // Green
-  display.drawString(60,20, String(ipString)); 
+  display.drawString(60,20, String(ipString));
   display.display();
   delay(3000);
 
   //SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
-  //myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin(). 
+  //myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin().
     mySerial.begin(BAUDRATE);                                   // Uno Example: Begin Stream with MHZ19 baudrate
-    myMHZ19.begin(mySerial); 
+    myMHZ19.begin(mySerial);
   //myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
 
   ThingSpeak.begin(client);  // Initialize ThingSpeak
@@ -243,13 +246,13 @@ WiFi.mode(WIFI_STA);
 
 void loop()
 {
-  
+
   Serial.println(digitalRead(T4));  // get value using T4 Touch Sensor
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);
   //display.drawXbm(60, 0, co2_width, co2_height, co2_sym);
-  display.drawString(65, 0, "CO2 Meter"); 
+  display.drawString(65, 0, "CO2 Meter");
 
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_16);
@@ -258,7 +261,7 @@ void loop()
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_24);
   readMHZ19b();
-  Temp = myMHZ19.getTemperature();          // Request CO2 (as ppm)    
+  Temp = myMHZ19.getTemperature();          // Request CO2 (as ppm)
   display.drawString(15, 20, String(CO2));
 
   display.setTextAlignment(TEXT_ALIGN_LEFT);
@@ -269,7 +272,7 @@ void loop()
   display.setFont(ArialMT_Plain_10);
   display.drawString(120, 50, String(Temp) + "°C");
   //display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%");
-  
+
   display.display();
   co2Warnung();
 
@@ -281,22 +284,22 @@ void loop()
     display.drawString(5, 2, " Temperature = " + String(bme.readTemperature(), 2)     + "°C");
     display.drawString(5, 12, " Pressure = " + String(bme.readPressure() / 100.0F) + " hPa");
     display.drawString(5, 22, " Humidity = " + String(bme.readHumidity(), 1)        + "%");
-  */ 
+  */
     humidity_score = GetHumidityScore();
     gas_score      = GetGasScore();
-   
-  
+
+
     //Combine results for the final IAQ index value (0-100% where 100% is good quality air)
     float air_quality_score = humidity_score + gas_score;
     if ((getgasreference_count++) % 5 == 0) GetGasReference();
-    
+
     air_quality = CalculateIAQ(air_quality_score);
     //display.setTextAlignment(TEXT_ALIGN_CENTER);
-    //display.setFont(ArialMT_Plain_10);    
+    //display.setFont(ArialMT_Plain_10);
     //display.drawString(5, 33, String(air_quality));
 
    //display.display();
-   delay(12000);   
+   delay(12000);
   //};  // get value using T4 Touch Sensor
 
   // set the fields with the values
@@ -304,10 +307,10 @@ void loop()
   ThingSpeak.setField(2, bme.readTemperature());
   ThingSpeak.setField(3, bme.readHumidity());
   ThingSpeak.setField(4, air_quality_score);
-  
+
   // set the status
   ThingSpeak.setStatus(myStatus);
-  
+
   // write to the ThingSpeak channel
   int x = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
   if(x == 200){
@@ -331,19 +334,19 @@ void readMHZ19b()
   {
     previousMillis = millis();
 
-    Serial.print(F("CO2 und Temperatur lesen: "));  
+    Serial.print(F("CO2 und Temperatur lesen: "));
     Serial.println(counter);
-    
-    CO2 = myMHZ19.getCO2();           // Request CO2 (as ppm)    
-    Serial.print(F("CO2: "));     
+
+    CO2 = myMHZ19.getCO2();           // Request CO2 (as ppm)
+    Serial.print(F("CO2: "));
     Serial.println(CO2);
-    
+
     Temp = myMHZ19.getTemperature();   // Request Temperature (as Celsius)
     Serial.print(F("Temp: "));
-    Serial.println(Temp);      
+    Serial.println(Temp);
 
     counter++;
-    
+
      if (counter > 10){
        counter = 0;
       }
@@ -364,10 +367,10 @@ void co2Warnung()
             tone(14, 600); // …spiele diesen Ton...
             delay(200); //…und zwar für eine Sekunde...
             tone(14, 400); // …spiele diesen Ton...
-            delay(300); //…und zwar für eine Sekunde...        
+            delay(300); //…und zwar für eine Sekunde...
             noTone(14); // Ton abschalten
             }
-        } else {         
+        } else {
         if(CO2 < 2000) {
            colorWipe(pixels.Color(  255, 71,   0), 40); // Orange
             if((CO2 > 1900) && (CO2 < 2000 )) {
@@ -376,7 +379,7 @@ void co2Warnung()
             tone(14, 600); // …spiele diesen Ton...
             delay(200); //…und zwar für eine Sekunde...
             tone(14, 400); // …spiele diesen Ton...
-            delay(300); //…und zwar für eine Sekunde...        
+            delay(300); //…und zwar für eine Sekunde...
             noTone(14); // Ton abschalten
             }
         } else {
