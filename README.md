@@ -1,6 +1,6 @@
 ***CO2-Messgerät/Ampel***
 
-![CO2-Ampel_Galerie](images/CO2-Meter2.jpg)
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/UA3pel5LR24/0.jpg)](http://www.youtube.com/watch?v=UA3pel5LR24 "DIY CO2 Ampel")
 
 [Weitere Fotos in der Galerie auf Thingiverse](https://www.thingiverse.com/thing:4644826)
 
