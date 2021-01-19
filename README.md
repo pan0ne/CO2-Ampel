@@ -1,9 +1,5 @@
 ***CO2-Messgerät/Ampel***
 
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/UA3pel5LR24/0.jpg)](http://www.youtube.com/watch?v=UA3pel5LR24 "DIY CO2 Ampel")
-
-[Weitere Fotos in der Galerie auf Thingiverse](https://www.thingiverse.com/thing:4644826)
-
 Dieses Projekt zeigt den Bau einer CO2 Ampel.
 Benutzt wird ein **ESP8266 / ESP32** Mikrocontroller und ein **MHZ-19b CO2 Sensor**. Zusätzlich kann ein **BME680 Luftqualitätssensor** angeschlossen werden um die Messwerte zu präzisieren sowie**Neopixel** und **SSD1306 Display** zur visuellen Ausgabe.  
 
@@ -30,3 +26,9 @@ https://www.thingiverse.com/thing:4644826
 Eine ***Bauanleitung*** mit allen Angaben von Druck der Bauteile über Verkabelung bis Programmierung befindet sich ***im Github Wiki***:
 
 - https://github.com/pan0ne/CO2-Ampel/wiki/Anleitung
+
+**Videoanleitung**
+
+[![YouTube Anleitung](http://img.youtube.com/vi/UA3pel5LR24/0.jpg)](http://www.youtube.com/watch?v=UA3pel5LR24 "DIY CO2 Ampel")
+
+[Weitere Fotos in der Galerie auf Thingiverse](https://www.thingiverse.com/thing:4644826)
