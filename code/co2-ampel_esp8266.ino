@@ -258,20 +258,27 @@ void loop()
   display.setFont(ArialMT_Plain_16);
   display.drawString(110, 30, " ppm");
   display.display();
+  
+  // CO2 Wert des CO2 Sensors lesen und auf dem Display mittig ausgeben
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_24);
   readMHZ19b();
-  Temp = myMHZ19.getTemperature();          // Request CO2 (as ppm)
   display.drawString(15, 20, String(CO2));
-
+  // Temperatur des BME680 Sensors lesen und auf dem Display unten links ausgeben
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_10);
   display.drawString(5, 50, String(bme.readTemperature(), 1)     + " °C");
 
-  display.setTextAlignment(TEXT_ALIGN_RIGHT);
+  display.setTextAlignment(TEXT_ALIGN_RIGHT); 
   display.setFont(ArialMT_Plain_10);
-  display.drawString(120, 50, String(Temp) + "°C");
-  //display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%");
+  /* 
+  Luftfeuchtigkeitswert des BME680 Sensors lesen und unten-rechts im Display ausgeben
+  Alternativ kann auch der Temperaturwert des CO2 Sensors zum Vergleich der Temperaturmesswerte ausgegeben werden
+  */
+  // Temp = myMHZ19.getTemperature();          // Auslesen der Temperaturmessung des MH-Z19b
+  // display.drawString(120, 50, String(Temp) + "°C"); // Anzeige MHZ-19b Temperatur
+  // Displayausgabe Luftgeuchtigkeit des BME680 
+  display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%"); //Auskommentieren bei Temperaturausgabe
 
   display.display();
   co2Warnung();
