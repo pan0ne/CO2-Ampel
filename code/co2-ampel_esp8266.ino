@@ -237,7 +237,7 @@ WiFi.mode(WIFI_STA);
   //myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin().
     mySerial.begin(BAUDRATE);                                   // Uno Example: Begin Stream with MHZ19 baudrate
     myMHZ19.begin(mySerial);
-  //myMHZ19.autoCalibration();                          // Turn auto calibration ON (OFF autoCalibration(false))
+    myMHZ19.autoCalibration(false);                          // Turn auto calibration ON (OFF autoCalibration(false))
 
   ThingSpeak.begin(client);  // Initialize ThingSpeak
   delay(3000);
