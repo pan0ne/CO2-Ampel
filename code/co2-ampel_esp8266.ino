@@ -275,10 +275,8 @@ void loop()
   Luftfeuchtigkeitswert des BME680 Sensors lesen und unten-rechts im Display ausgeben
   Alternativ kann auch der Temperaturwert des CO2 Sensors zum Vergleich der Temperaturmesswerte ausgegeben werden
   */
-  // Temp = myMHZ19.getTemperature();          // Auslesen der Temperaturmessung des MH-Z19b
   // display.drawString(120, 50, String(Temp) + "°C"); // Anzeige MHZ-19b Temperatur
-  // Displayausgabe Luftgeuchtigkeit des BME680 
-  display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%"); //Auskommentieren bei Temperaturausgabe
+  display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%"); // Anzeige der Luftfeuchtigkeit BME680
 
   display.display();
   co2Warnung();
