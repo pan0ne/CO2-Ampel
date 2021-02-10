@@ -55,14 +55,18 @@ String myStatus = "";
   MH-Z19b_TX - D7 Pin
  ****************************************************************************/
 unsigned long getDataTimer = 0;
-#define RX_PIN 13       // Rx pin (D7) which the MHZ19 Tx pin is attached to
-#define TX_PIN 12      // Tx pin (D8) which the MHZ19 Rx pin is attached to
-#define BAUDRATE 9600   // Device to MH-Z19 Serial baudrate (should not be changed)
 MHZ19 myMHZ19;          // Constructor for library
 SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
 //HardwareSerial mySerial(1);
 int8_t Temp;
 int CO2;
+
+/***************************************************************************
+ Button handler (FlashButton als normalen Inputbutton verwenden)
+ ****************************************************************************/
+void IRAM_ATTR handleInterrupt() {
+  dMode++;
+}
 /***************************************************************************
   BME 680 Sensor / Pins -> ESP8266_amica
   SDA - D2 (GPIO 2)
@@ -101,8 +105,6 @@ void logo()
   Neopixel / Pin -> ESP8266_amica
   Di - D5 (GPIO 25)
  ****************************************************************************/
-#define PIN       2 // Pin - auf dem Heltec LoRa Wifi v2 ist es Pin 25
-#define NUMPIXELS 4 // Anzahl der Pixel
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
 
@@ -202,12 +204,13 @@ WiFi.mode(WIFI_STA);
   display.display();
   delay(3000);
 
-  //SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) create device to MH-Z19 serial
-  //myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin().
-    mySerial.begin(BAUDRATE);                                   // Uno Example: Begin Stream with MHZ19 baudrate
-    myMHZ19.begin(mySerial);
-  myMHZ19.autoCalibration(false);                          // Turn auto calibration ON (OFF autoCalibration(false))
-
+  mySerial.begin(BAUDRATE);          // Uno Example: Begin Stream with MHZ19 baudrate
+  myMHZ19.begin(mySerial);
+  myMHZ19.autoCalibration(false);   // Turn auto calibration ON (OFF autoCalibration(false))
+ 
+  pinMode(FlashButtonPIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(FlashButtonPIN), handleInterrupt, FALLING);
+  
   ThingSpeak.begin(client);  // Initialize ThingSpeak
   delay(3000);
 }
@@ -215,6 +218,11 @@ WiFi.mode(WIFI_STA);
 
 void loop()
 {
+  if (dMode != last_dMode) {   // != logical "not equal"
+    Serial.println("Kalibrierung gestartet");
+    myMHZ19.calibrateZero();
+    last_dMode = dMode;
+  }
 
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
@@ -234,7 +242,7 @@ void loop()
 
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_10);
-  display.drawString(5, 50, String(bme.readTemperature() - 3, 1)     + " °C");
+  display.drawString(5, 50, String(bme.readTemperature() + 1.5, 1)     + " ° C");
 
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_10);
