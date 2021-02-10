@@ -234,7 +234,7 @@ void loop()
 
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_10);
-  display.drawString(5, 50, String(bme.readTemperature(), 1)     + " °C");
+  display.drawString(5, 50, String(bme.readTemperature() - 3, 1)     + " °C");
 
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_10);
