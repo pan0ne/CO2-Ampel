@@ -1,41 +1,25 @@
 /*
-  CO2 Ampel
-  Dies ist ein Beispiel Arduino Sketch für eine CO2 Ampel für einen ESP8266 NodeMCU/Amica.
+  ESP8266 CO2 Ampel
+  Author: Pan0ne
+  Date/Version: 202101212146
+  Libraries - Boardmanager:
+    "TTN_ESP32" https://github.com/rgot-org/TheThingsNetwork_esp32
+    "Adfruit NeoPixel" https://github.com/adafruit/Adafruit_NeoPixel
+    "HelTec" https://github.com/HelTecAutomation/Heltec_ESP32 -
+    "MHZ19" https://github.com/tobiasschuerg/MH-Z-CO2-Sensors
+    "Adafruit_BME680" und "Adafruit_Sensors"
+    "ESP SoftwareSerial" https://github.com/plerup/espsoftwareserial/
 
-  Notice:
-  The onboard OLED display is SSD1306 driver and I2C interface. In order to make the
-  OLED correctly operation, you should output a high-low-high(1-0-1) signal by soft-
-  ware to OLED's reset pin, the low-level signal at least 5ms.
+Please check config.h for configurations
+*/
 
-  OLED Pins -> ESP8266_amica:
-  OLED_SDA -- D2
-  OLED_SCL -- D1
-  OLED_RST -- RST
-
-  MH-Z19b Pins -> ESP8266_amica:
-  MH-Z19b_RX - D6 Pin
-  MH-Z19b_TX - D7 Pin
-
-  Neopixel Pin -> ESP8266_amica:
-  Di - D5 (GPIO 25)
-
-  BME680 Pins -> ESP8266_amica:
-  SDA - D2 (GPIO 2)
-  SCL - D1 (GPIO 1)
-
-  Touch Button Pin -> ESP8266:
-  Di - D10 (GPIO 10)
-
-  untere Reihe: v.l n.r: LED-> 5V; LED-> GND; 3x frei; MHZ19B->Tx;MHZ19B->Rx; 3x frei; LED-> Din; frei; BME680->SDA; BME680->SCL 
-  obere Reihe v.l.n.r: 5V; GND; frei; frei; BME680->VCC; BME680->GND
-
-  */
-#include <Arduino.h>
-#include "SSD1306Wire.h"
-#include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
   #include <avr/power.h>
 #endif
+
+#include <Arduino.h>
+#include "SSD1306Wire.h"
+#include <Adafruit_NeoPixel.h>
 #include "images.h"
 #include "config.h"
 #include "MHZ19.h"
@@ -47,11 +31,12 @@
 #include "Adafruit_BME680.h"
 
 /***************************************************************************
-    Display
+  SSD1606 Display OLED Pins -> ESP8266_amica
+  OLED_SDA -- D2
+  OLED_SCL -- D1
+  OLED_RST -- RST
  ****************************************************************************/
-
 SSD1306Wire display(0x3c, SDA, SCL);
-
 /***************************************************************************
     WiFi und thingspeak
  ****************************************************************************/
@@ -64,12 +49,12 @@ unsigned long myChannelNumber = SECRET_CH_ID;
 const char * myWriteAPIKey = SECRET_WRITE_APIKEY;
 
 String myStatus = "";
-
 /***************************************************************************
-    CO2 Sensor
+  CO2 Sensor -   MH-Z19b Pins -> ESP8266_amica
+  MH-Z19b_RX - D6 Pin
+  MH-Z19b_TX - D7 Pin
  ****************************************************************************/
 unsigned long getDataTimer = 0;
-
 #define RX_PIN 13       // Rx pin (D7) which the MHZ19 Tx pin is attached to
 #define TX_PIN 12      // Tx pin (D8) which the MHZ19 Rx pin is attached to
 #define BAUDRATE 9600   // Device to MH-Z19 Serial baudrate (should not be changed)
@@ -78,14 +63,12 @@ SoftwareSerial mySerial(RX_PIN, TX_PIN);                   // (Uno example) crea
 //HardwareSerial mySerial(1);
 int8_t Temp;
 int CO2;
-
-
 /***************************************************************************
-    BME 680 Sensor
+  BME 680 Sensor / Pins -> ESP8266_amica
+  SDA - D2 (GPIO 2)
+  SCL - D1 (GPIO 1) 
  ****************************************************************************/
-
 #define SEALEVELPRESSURE_HPA (1013.25)
-
 Adafruit_BME680 bme; // I2C
 
 float hum_weighting = 0.25; // so hum effect is 25% of the total air quality score
@@ -98,10 +81,8 @@ int   getgasreference_count = 0;
 int   gas_lower_limit = 10000;  // Bad air quality limit
 int   gas_upper_limit = 300000; // Good air quality limit
 String  air_quality;
-
-
 /***************************************************************************
-    Logo aus der images.h
+    Logo "co2a_logo" -> images.h
     Duisentrieb Logo und Schriftzug
  ****************************************************************************/
 void logo()
@@ -116,14 +97,12 @@ void logo()
   display.display();
   delay(6000);
 }
-
-/***************************************************************************
-    Neopixel
-
+/***************************************************************************  
+  Neopixel / Pin -> ESP8266_amica
+  Di - D5 (GPIO 25)
  ****************************************************************************/
-
 #define PIN       2 // Pin - auf dem Heltec LoRa Wifi v2 ist es Pin 25
-#define NUMPIXELS 8 // Anzahl der Pixel
+#define NUMPIXELS 4 // Anzahl der Pixel
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
 
@@ -148,18 +127,8 @@ void colorWipe(uint32_t color, int wait) {
     delay(wait);                           //  Pause for a moment
   }
 }
-
-
-/***************************************************************************
-    Touch Button
-
- ****************************************************************************/
-
-#define T4  10 // GPIO 10
-
 /***************************************************************************
     Setup
-
  ****************************************************************************/
 void setup()
 {
@@ -237,7 +206,7 @@ WiFi.mode(WIFI_STA);
   //myMHZ19.begin(mySerial);                                // *Serial(Stream) refence must be passed to library begin().
     mySerial.begin(BAUDRATE);                                   // Uno Example: Begin Stream with MHZ19 baudrate
     myMHZ19.begin(mySerial);
-    myMHZ19.autoCalibration(false);                          // Turn auto calibration ON (OFF autoCalibration(false))
+  myMHZ19.autoCalibration(false);                          // Turn auto calibration ON (OFF autoCalibration(false))
 
   ThingSpeak.begin(client);  // Initialize ThingSpeak
   delay(3000);
@@ -247,7 +216,6 @@ WiFi.mode(WIFI_STA);
 void loop()
 {
 
-  Serial.println(digitalRead(T4));  // get value using T4 Touch Sensor
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);
@@ -258,25 +226,20 @@ void loop()
   display.setFont(ArialMT_Plain_16);
   display.drawString(110, 30, " ppm");
   display.display();
-  
-  // CO2 Wert des CO2 Sensors lesen und auf dem Display mittig ausgeben
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_24);
   readMHZ19b();
+  Temp = myMHZ19.getTemperature();          // Request CO2 (as ppm)
   display.drawString(15, 20, String(CO2));
-  // Temperatur des BME680 Sensors lesen und auf dem Display unten links ausgeben
+
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_10);
   display.drawString(5, 50, String(bme.readTemperature(), 1)     + " °C");
 
-  display.setTextAlignment(TEXT_ALIGN_RIGHT); 
+  display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_10);
-  /* 
-  Luftfeuchtigkeitswert des BME680 Sensors lesen und unten-rechts im Display ausgeben
-  Alternativ kann auch der Temperaturwert des CO2 Sensors zum Vergleich der Temperaturmesswerte ausgegeben werden
-  */
-  // display.drawString(120, 50, String(Temp) + "°C"); // Anzeige MHZ-19b Temperatur
-  display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%"); // Anzeige der Luftfeuchtigkeit BME680
+  display.drawString(120, 50, String(Temp) + "°C");
+  //display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%");
 
   display.display();
   co2Warnung();
