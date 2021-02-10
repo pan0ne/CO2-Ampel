@@ -1,4 +1,4 @@
-***Elektronische Bauteile / Einkaufsliste:***
+##Elektronische Bauteile / Einkaufsliste##
 
 **Heltec Wifi LoRa v2 Microcontriller (ESP32)**
 - Boardinformationen: https://heltec.org/project/wifi-lora-32/ 
