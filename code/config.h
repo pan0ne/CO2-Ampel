@@ -30,6 +30,14 @@ const char* appKey = "xxxxxxx"; // Chaneg to TTN Application Key
 volatile int dMode = 1;
 int last_dMode = 0;
 
+
+/***************************************************************************
+                          Temperaturwertkorrektur 
+Temperaturwert des BME680 korrigieren. 
+Der Wert kann positiv und negativ sein. Zum Beispiel 2 oder -2                        
+ ****************************************************************************/
+int temp_adjust = 0;
+
 /***************************************************************************
                 Neopixel - Anzahl, Pin, Helligkeit
 ****************************************************************************/
