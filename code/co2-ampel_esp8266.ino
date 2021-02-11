@@ -4,6 +4,7 @@
 #  Date/Version: 202102110203
 #  Libraries - Boardmanager:
 #    "TTN_ESP32" https://github.com/rgot-org/TheThingsNetwork_esp32
+#    "ThingSpeak.h" per Suchfunktion in der Bibliotheksverwaltung
 #    "Adfruit NeoPixel" https://github.com/adafruit/Adafruit_NeoPixel
 #    "MHZ19" https://github.com/tobiasschuerg/MH-Z-CO2-Sensors
 #    "Adafruit_BME680" + "Adafruit_Sensors"
