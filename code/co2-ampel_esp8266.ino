@@ -1,16 +1,16 @@
 /*
-#  ESP8266 CO2 Ampel
-#  Author: Pan0ne
-#  Date/Version: 202102110203
-#  Libraries - Boardmanager:
-#    "TTN_ESP32" https://github.com/rgot-org/TheThingsNetwork_esp32
-#    "ThingSpeak.h" per Suchfunktion in der Bibliotheksverwaltung
-#    "Adfruit NeoPixel" https://github.com/adafruit/Adafruit_NeoPixel
-#    "MHZ19" https://github.com/tobiasschuerg/MH-Z-CO2-Sensors
-#    "Adafruit_BME680" + "Adafruit_Sensors"
-#    "ESP SoftwareSerial" https://github.com/plerup/espsoftwareserial/
-#
-# Please check config.h for configurations before upload sketch!!
+  ESP8266 CO2 Ampel
+  Author: Pan0ne
+  Date/Version: 202101212146
+  Libraries - Boardmanager:
+    "TTN_ESP32" https://github.com/rgot-org/TheThingsNetwork_esp32
+    "Adfruit NeoPixel" https://github.com/adafruit/Adafruit_NeoPixel
+    "HelTec" https://github.com/HelTecAutomation/Heltec_ESP32 -
+    "MHZ19" https://github.com/tobiasschuerg/MH-Z-CO2-Sensors
+    "Adafruit_BME680" und "Adafruit_Sensors"
+    "ESP SoftwareSerial" https://github.com/plerup/espsoftwareserial/
+
+  Please check config.h for configuration
 */
 
 #ifdef __AVR__
@@ -218,9 +218,18 @@ WiFi.mode(WIFI_STA);
 
 void loop()
 {
-  if (dMode != last_dMode) {   // != logical "not equal"
-    Serial.println("Kalibrierung gestartet");
+  if (dMode != last_dMode) { 
+    display.clear();
+    display.setTextAlignment(TEXT_ALIGN_CENTER);
+    display.setFont(ArialMT_Plain_16);
+    display.drawString(60, 20, "Kalibrierung \n gestartet");
+    display.display(); 
     myMHZ19.calibrateZero();
+    delay(5000);
+    display.clear();
+    display.drawString(60, 20, "Kalibrierung \n erfolgreich!");
+    display.display();
+    delay(2000);    
     last_dMode = dMode;
   }
 
@@ -242,12 +251,12 @@ void loop()
 
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_10);
-  display.drawString(5, 50, String(bme.readTemperature() + 1.5, 1)     + " ° C");
+  display.drawString(5, 50, String(bme.readTemperature() + temp_adjust, 1)     + " ° C");
 
   display.setTextAlignment(TEXT_ALIGN_RIGHT);
   display.setFont(ArialMT_Plain_10);
-  display.drawString(120, 50, String(Temp) + "°C");
-  //display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%");
+  //display.drawString(120, 50, String(Temp) + "°C");
+  display.drawString(120, 50, String(bme.readHumidity(), 1)        + "%");
 
   display.display();
   co2Warnung();
@@ -276,7 +285,6 @@ void loop()
 
    //display.display();
    delay(12000);
-  //};  // get value using T4 Touch Sensor
 
   // set the fields with the values
   ThingSpeak.setField(1, CO2);
