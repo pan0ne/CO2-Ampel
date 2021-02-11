@@ -1,16 +1,15 @@
 /*
-  ESP8266 CO2 Ampel
-  Author: Pan0ne
-  Date/Version: 202101212146
-  Libraries - Boardmanager:
-    "TTN_ESP32" https://github.com/rgot-org/TheThingsNetwork_esp32
-    "Adfruit NeoPixel" https://github.com/adafruit/Adafruit_NeoPixel
-    "HelTec" https://github.com/HelTecAutomation/Heltec_ESP32 -
-    "MHZ19" https://github.com/tobiasschuerg/MH-Z-CO2-Sensors
-    "Adafruit_BME680" und "Adafruit_Sensors"
-    "ESP SoftwareSerial" https://github.com/plerup/espsoftwareserial/
-
-Please check config.h for configurations
+#  ESP8266 CO2 Ampel
+#  Author: Pan0ne
+#  Date/Version: 202102110203
+#  Libraries - Boardmanager:
+#    "TTN_ESP32" https://github.com/rgot-org/TheThingsNetwork_esp32
+#    "Adfruit NeoPixel" https://github.com/adafruit/Adafruit_NeoPixel
+#    "MHZ19" https://github.com/tobiasschuerg/MH-Z-CO2-Sensors
+#    "Adafruit_BME680" + "Adafruit_Sensors"
+#    "ESP SoftwareSerial" https://github.com/plerup/espsoftwareserial/
+#
+# Please check config.h for configurations before upload sketch!!
 */
 
 #ifdef __AVR__
