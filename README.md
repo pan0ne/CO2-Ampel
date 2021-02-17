@@ -1,18 +1,18 @@
 # DIY CO2-Messgerät / CO2-Ampel
 
-Dieses Projekt zeigt den Bau einer CO2 Ampel.
-Als Basis benutze ich einen **ESP8266 / ESP32 Mikrocontroller** und ein **MHZ-19b CO2 Sensor**. Zusätzlich kann ein **BME680 Luftqualitätssensor** angeschlossen werden um die Messwerte zu präzisieren sowie **Neopixel (WS2812b)** und/oder ein **SSD1306 Display** zur visuellen Anzeige.  
+Dieses Projekt zeigt den Bau einer CO2-Ampel.
+Als Basis benutze ich einen **ESP8266 / ESP32 Mikrocontroller** und ein **MHZ-19b CO2-Sensor**. Zusätzlich kann ein **BME680 Luftqualitätssensor** angeschlossen werden, um die Messwerte zu präzisieren sowie **Neopixel (WS2812b)** und/oder ein **SSD1306 Display** zur visuellen Anzeige.  
 
-***Messdaten***
+**Messdaten**
 - **Temperatur (C)**
-- **Luftfeuchte (%)**
+- **Luftfeuchtigkeit (%)**
 - **CO2 (ppm)**,
-- **Luftdruck(hPa)**
+- **Luftdruck (hPa)**
 - **Luftqualität (VOC, flüchtige organische Verbindungen)**.
 
-Die **Sensordaten** können via **LoRa WAN** an das **thethingsnetwork.org** gesendet werden, oder direkt per **WiFi**.
-Zur **Analyse der Daten** werden diese an **thingsspeak.com** übertragen und grafisch aufbereitet. (Account nötig).
-Bis auf den CO2 Sensor, der mit 5V betrieben wird, reicht für alles andere 3.3V. Der CO2 Sensor wird seriell über die RX/TX Pins abgefragt. Der Luftqualitätssensor kommuniziert über den i2c bus.
+Die **Sensordaten** können via **LoRa WAN** an das **thethingsnetwork.org** gesendet werden oder direkt per **WiFi**.
+Zur **Analyse der Daten** werden diese an **thingsspeak.com** übertragen und grafisch aufbereitet. (Account nötig)
+Bis auf den CO2-Sensor, der mit 5V betrieben wird, reicht für alles andere 3.3V. Der CO2-Sensor wird seriell über die RX/TX Pins abgefragt. Der Luftqualitätssensor kommuniziert über den i2c bus.
 
 **Gehäuse**
 - **Design**: TinkerCad.com
