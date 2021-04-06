@@ -9,8 +9,9 @@
     "MHZ19" https://github.com/tobiasschuerg/MH-Z-CO2-Sensors
     "Adafruit_BME680" und "Adafruit_Sensors"
     "ESP SoftwareSerial" https://github.com/plerup/espsoftwareserial/
-
-  Please check config.h for configuration
+    "WifiManager" https://github.com/tzapu/WiFiManager
+    
+Please include and check config.h
 */
 
 #ifdef __AVR__
@@ -26,6 +27,7 @@
 #include <SoftwareSerial.h>
 #include "ThingSpeak.h"
 #include <ESP8266WiFi.h>
+#include <WiFiManager.h> 
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include "Adafruit_BME680.h"
@@ -40,10 +42,17 @@ SSD1306Wire display(0x3c, SDA, SCL);
 /***************************************************************************
     WiFi und thingspeak
  ****************************************************************************/
-char ssid[] = SECRET_SSID;   // your network SSID (name)
-char pass[] = SECRET_PASS;   // your network password
+// char ssid[] = SECRET_SSID;   // your network SSID (name)
+// char pass[] = SECRET_PASS;   // your network password
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 WiFiClient  client;
+
+void configModeCallback (WiFiManager *myWiFiManager) {
+  Serial.println("Entered config mode");
+  Serial.println(WiFi.softAPIP());
+  //if you used auto generated SSID, print it
+  Serial.println(myWiFiManager->getConfigPortalSSID());
+}
 
 unsigned long myChannelNumber = SECRET_CH_ID;
 const char * myWriteAPIKey = SECRET_WRITE_APIKEY;
@@ -181,6 +190,9 @@ void setup()
   logo();
   colorWipe(pixels.Color(  255, 71,   0), 40); // Orange
 
+/* Old Wifi connecting mode
+ *  
+
 WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
 
@@ -194,13 +206,37 @@ WiFi.mode(WIFI_STA);
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
   String ipString = WiFi.localIP().toString();
+ */
 
+  // WiFiManager
+  //Local intialization. Once its business is done, there is no need to keep it around
+  WiFiManager wifiManager;
+  //reset settings - for testing
+  //wifiManager.resetSettings();
+
+  //set callback that gets called when connecting to previous WiFi fails, and enters Access Point mode
+  wifiManager.setAPCallback(configModeCallback);
+
+  //fetches ssid and pass and tries to connect
+  //if it does not connect it starts an access point with the specified name
+  //here  "AutoConnectAP"
+  //and goes into a blocking loop awaiting configuration
+  if(!wifiManager.autoConnect()) {
+    Serial.println("failed to connect and hit timeout");
+    //reset and try again, or maybe put it to deep sleep
+    ESP.restart();
+    delay(1000);
+  } 
+
+  //if you get here you have connected to the WiFi
+  Serial.println("connected...yeey :)");
+ 
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);
-  display.drawString(60, 0, "IP Adresse");
+  display.drawString(60, 0, "WiFi aktiv");
   colorWipe(pixels.Color(  0, 150,   0), 70); // Green
-  display.drawString(60,20, String(ipString));
+  //display.drawString(60,20, String(ipString));
   display.display();
   delay(3000);
 
@@ -305,7 +341,11 @@ void loop()
     Serial.println("Problem updating channel. HTTP error code " + String(x));
     myStatus = String("Offline");
   }
-
+  Serial.println();
+  Serial.print("Versorgungs- oder Batteriespannung:  ");
+  // Betriebsspannung auslesen
+  // genaue Spannung der Stromquelle, PIN A0 muss mit 3,3V Verbunden werden!
+  Serial.println(getBatteryVoltage());
 }
 
 void readMHZ19b()
@@ -425,4 +465,21 @@ int GetGasScore() {
   if (gas_score > 75) gas_score = 75; // Sometimes gas readings can go outside of expected scale maximum
   if (gas_score <  0) gas_score = 0;  // Sometimes gas readings can go outside of expected scale minimum
   return gas_score;
+}
+
+float getBatteryVoltage(){
+    //************ Measuring Battery Voltage ***********
+    float sample1 = 0;
+    // Get 100 analog read to prevent unusefully read
+    for (int i = 0; i < 100; i++) {
+        sample1 = sample1 + analogRead(A0); //read the voltage from the divider circuit
+        delay(2);
+    }
+    sample1 = sample1 / 100;
+    // REFERENCE_VCC is reference voltage of microcontroller 3.3v for esp8266 5v Arduino
+    // BAT_RES_VALUE_VCC is the kohom value of R1 resistor
+    // BAT_RES_VALUE_GND is the kohom value of R2 resistor
+    // 1023 is the max digital value of analog read (1024 == Reference voltage)
+    float batVolt = (sample1 * REFERENCE_VCC  * (BAT_RES_VALUE_VCC + BAT_RES_VALUE_GND) / BAT_RES_VALUE_GND) / 1023;
+    return batVolt;
 }
