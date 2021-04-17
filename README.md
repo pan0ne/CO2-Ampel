@@ -29,8 +29,4 @@ Eine ***Bauanleitung*** mit allen Angaben von Druck der Bauteile über Verkabelu
 
 - https://github.com/pan0ne/CO2-Ampel/wiki/Home
 
-**Videoanleitung**
-
-[![YouTube Anleitung](images/CO2-Ampel_VideoCoverImage.png)](https://youtu.be/UA3pel5LR24?t=15 "DIY CO2 Ampel")
-
 [Weitere Fotos in der Galerie auf Thingiverse](https://www.thingiverse.com/thing:4644826)
