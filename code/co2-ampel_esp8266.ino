@@ -1,17 +1,17 @@
 /*
-  ESP8266 CO2 Ampel
-  Author: Pan0ne
-  Date/Version: 202101212146
-  Libraries - Boardmanager:
-    "TTN_ESP32" https://github.com/rgot-org/TheThingsNetwork_esp32
-    "Adfruit NeoPixel" https://github.com/adafruit/Adafruit_NeoPixel
-    "HelTec" https://github.com/HelTecAutomation/Heltec_ESP32 -
-    "MHZ19" https://github.com/tobiasschuerg/MH-Z-CO2-Sensors
-    "Adafruit_BME680" und "Adafruit_Sensors"
-    "ESP SoftwareSerial" https://github.com/plerup/espsoftwareserial/
-    "WifiManager" https://github.com/tzapu/WiFiManager
-    
-Please include and check config.h
+*  ESP8266 CO2 Ampel
+*  Author: Pan0ne
+*  Libraries - Boardmanager:
+*    "TTN_ESP32" https://github.com/rgot-org/TheThingsNetwork_esp32
+*    "Adfruit NeoPixel" https://github.com/adafruit/Adafruit_NeoPixel
+*    "MHZ19" https://github.com/tobiasschuerg/MH-Z-CO2-Sensors
+*    "Adafruit_BME680" und "Adafruit_Sensors"
+*    "ESP SoftwareSerial" https://github.com/plerup/espsoftwareserial/
+*    "WifiManager" https://github.com/tzapu/WiFiManager
+*    
+*    Please include and images.h and config.h 
+*    In config.h, the variables for Wifi, the number of neopixels, Thingspeak API keys, 
+*    sensor pins and values for temperature adjustment are defined.
 */
 
 #ifdef __AVR__
@@ -114,6 +114,7 @@ void logo()
   Neopixel / Pin -> ESP8266_amica
   Di - D5 (GPIO 25)
  ****************************************************************************/
+// NUMPIXELS -> the count of neopixels is defined in the config.h 
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 #define DELAYVAL 500 // Time (in milliseconds) to pause between pixels
 
@@ -229,12 +230,12 @@ WiFi.mode(WIFI_STA);
   } 
 
   //if you get here you have connected to the WiFi
-  Serial.println("connected...yeey :)");
+  Serial.println("WIFI connected...:)");
  
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);
-  display.drawString(60, 0, "WiFi aktiv");
+  display.drawString(60, 0, "WiFi verbunden");
   colorWipe(pixels.Color(  0, 150,   0), 70); // Green
   //display.drawString(60,20, String(ipString));
   display.display();
@@ -242,7 +243,7 @@ WiFi.mode(WIFI_STA);
 
   mySerial.begin(BAUDRATE);          // Uno Example: Begin Stream with MHZ19 baudrate
   myMHZ19.begin(mySerial);
-  myMHZ19.autoCalibration(false);   // Turn auto calibration ON (OFF autoCalibration(false))
+  myMHZ19.autoCalibration(true);   // Turn auto calibration ON (OFF autoCalibration(false))
  
   pinMode(FlashButtonPIN, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(FlashButtonPIN), handleInterrupt, FALLING);
@@ -466,7 +467,7 @@ int GetGasScore() {
   if (gas_score <  0) gas_score = 0;  // Sometimes gas readings can go outside of expected scale minimum
   return gas_score;
 }
-
+/*
 float getBatteryVoltage(){
     //************ Measuring Battery Voltage ***********
     float sample1 = 0;
@@ -482,4 +483,4 @@ float getBatteryVoltage(){
     // 1023 is the max digital value of analog read (1024 == Reference voltage)
     float batVolt = (sample1 * REFERENCE_VCC  * (BAT_RES_VALUE_VCC + BAT_RES_VALUE_GND) / BAT_RES_VALUE_GND) / 1023;
     return batVolt;
-}
+}*/
