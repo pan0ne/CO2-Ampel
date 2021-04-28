@@ -27,7 +27,7 @@ const char* appKey = "xxxxxxx"; // Chaneg to TTN Application Key
 #define BAUDRATE 9600   // Device to MH-Z19 Serial baudrate (should not be changed)
 #define MHZ_RANGE 5000  // Sensibilität der Messungen, bis 2000ppm, bis 5000ppm, bis 10000ppm
 #define FlashButtonPIN 0 // Der Flash Button des NodeMCU Amica kallibriert die C02 Ampel und setzt den Wert zurück auf 400ppm. 
-int dMode = 1;
+int dMode = 0;
 int last_dMode = 0;
 
 
