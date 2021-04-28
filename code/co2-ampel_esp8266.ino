@@ -342,11 +342,11 @@ void loop()
     Serial.println("Problem updating channel. HTTP error code " + String(x));
     myStatus = String("Offline");
   }
-  Serial.println();
-  Serial.print("Versorgungs- oder Batteriespannung:  ");
+  //Serial.println();
+  //Serial.print("Versorgungs- oder Batteriespannung:  ");
   // Betriebsspannung auslesen
   // genaue Spannung der Stromquelle, PIN A0 muss mit 3,3V Verbunden werden!
-  Serial.println(getBatteryVoltage());
+  //Serial.println(getBatteryVoltage());
 }
 
 void readMHZ19b()
