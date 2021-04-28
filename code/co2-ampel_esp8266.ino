@@ -255,21 +255,6 @@ WiFi.mode(WIFI_STA);
 
 void loop()
 {
-  if (dMode != last_dMode) { 
-    display.clear();
-    display.setTextAlignment(TEXT_ALIGN_CENTER);
-    display.setFont(ArialMT_Plain_16);
-    display.drawString(60, 20, "Kalibrierung \n gestartet");
-    display.display(); 
-    myMHZ19.calibrateZero();
-    delay(5000);
-    display.clear();
-    display.drawString(60, 20, "Kalibrierung \n erfolgreich!");
-    display.display();
-    delay(2000);    
-    last_dMode = dMode;
-  }
-
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);
@@ -347,6 +332,21 @@ void loop()
   // Betriebsspannung auslesen
   // genaue Spannung der Stromquelle, PIN A0 muss mit 3,3V Verbunden werden!
   //Serial.println(getBatteryVoltage());
+  
+    if (dMode != last_dMode) { 
+    display.clear();
+    display.setTextAlignment(TEXT_ALIGN_CENTER);
+    display.setFont(ArialMT_Plain_16);
+    display.drawString(60, 20, "Kalibrierung \n gestartet");
+    display.display(); 
+    myMHZ19.calibrateZero();
+    delay(5000);
+    display.clear();
+    display.drawString(60, 20, "Kalibrierung \n erfolgreich!");
+    display.display();
+    delay(2000);    
+    last_dMode = dMode;
+  }
 }
 
 void readMHZ19b()
