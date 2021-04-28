@@ -255,7 +255,7 @@ WiFi.mode(WIFI_STA);
 
 void loop()
 {
-    if (dMode == last_dMode) { 
+    if (dMode != last_dMode) { 
     display.clear();
     display.setTextAlignment(TEXT_ALIGN_CENTER);
     display.setFont(ArialMT_Plain_16);
