@@ -236,7 +236,7 @@ WiFi.mode(WIFI_STA);
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);
   display.drawString(60, 0, "WiFi verbunden");
-  colorWipe(pixels.Color(  0, 150,   0), 70); // Green
+  colorWipe(pixels.Color(  0, 63,   0), 70); // Green
   //display.drawString(60,20, String(ipString));
   display.display();
   delay(3000);
@@ -383,10 +383,10 @@ void readMHZ19b()
 void co2Warnung()
 {
         if(CO2 < 850) {
-          colorWipe(pixels.Color(  0, 255,   0), 150); // Green
+          colorWipe(pixels.Color(  0, 63,   0), 150); // Green 63 = 1/4 brightness 255 = full brightness
         } else {
         if(CO2 < 1500) {
-          colorWipe(pixels.Color(  150, 150,   0), 150); // Yellow
+          colorWipe(pixels.Color(  63, 63,   0), 150); // Yellow 63 = 1/4 brightness 255 = full brightness
            if((CO2 > 1400) && (CO2 < 1500 )) {
             tone(14, 800); // …spiele diesen Ton...
             delay(100); //…und zwar für eine Sekunde...
@@ -398,7 +398,7 @@ void co2Warnung()
             }
         } else {
         if(CO2 < 2000) {
-           colorWipe(pixels.Color(  255, 71,   0), 40); // Orange
+           colorWipe(pixels.Color(  63, 18,   0), 40); // Orange 63/18 = 1/4 brightness 255/73 = full brightness
             if((CO2 > 1900) && (CO2 < 2000 )) {
             tone(14, 800); // …spiele diesen Ton...
             delay(100); //…und zwar für eine Sekunde...
@@ -409,8 +409,8 @@ void co2Warnung()
             noTone(14); // Ton abschalten
             }
         } else {
-            //colorWipe(pixels.Color(255,   0,   0), 150); // Red
-            rainbow(10);
+            colorWipe(pixels.Color(63,   0,   0), 150); // Red 63 = 1/4 brightness 255 = full brightness
+            //rainbow(10);
             tone(14, 600); // …spiele diesen Ton...
             delay(200); //…und zwar für eine Sekunde...
             noTone(14); // Ton abschalten
