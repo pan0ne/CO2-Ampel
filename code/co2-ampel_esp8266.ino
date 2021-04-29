@@ -151,6 +151,7 @@ void setup()
   #endif
 
   pixels.begin();
+  pixels.setBrightness(35); 
   Wire.begin();
   bme.begin();
 
