@@ -132,6 +132,11 @@ void colorWipe(uint32_t color, int wait) {
 void setup()
 {
   Serial.begin(9600);
+  
+  #if defined (__AVR_ATtiny85__)
+  if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
+  #endif
+  
   pixels.begin();
   pixels.show();  // Turn OFF all pixels ASAP
   pixels.setBrightness(100);
