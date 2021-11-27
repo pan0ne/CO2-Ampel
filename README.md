@@ -21,7 +21,7 @@ https://www.thingiverse.com/thing:4644826
 - **Material**:   PLA (Sunlu), Holzoptik, carbonschwarz, transparent
 - **Temperatur**: 195°C Noozle / Heizbett 58°
 - **Einstellungen**: keine Stützstrukturen
-- **Slicer**: Cura 4.8.0
+- **Slicer**: Cura 4.x.x
 
 **Bauanleitung**
 
