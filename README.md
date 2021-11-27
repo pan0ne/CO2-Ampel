@@ -29,4 +29,6 @@ Eine ***Bauanleitung*** mit allen Angaben von Druck der Bauteile über Verkabelu
 
 - https://github.com/pan0ne/CO2-Ampel/wiki/Home
 
+![Verwendete Werkzeuge](https://github.com/pan0ne/CO2-Ampel/blob/main/images/CO2-Ampel-DUISentrieb.800.jpg)
+
 [Weitere Fotos in der Galerie auf Thingiverse](https://www.thingiverse.com/thing:4644826)
