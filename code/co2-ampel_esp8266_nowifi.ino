@@ -209,7 +209,7 @@ void loop()
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_10);
-  display.drawString(62, 1, String(air_quality));
+  //display.drawString(62, 1, String(air_quality));
   display.drawXbm(12, 14, co2_sym_width, co2_sym_height, co2_sym);
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_24);
