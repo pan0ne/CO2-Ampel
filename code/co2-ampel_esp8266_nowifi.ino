@@ -1,41 +1,44 @@
 /*
-  ESP8266 CO2 Ampel
+  ESP8266 CO2 Ampel noWiFi Version
   Author: Pan0ne
-  Date/Version: 202108122146
-  Libraries - Boardmanager:
-    "TTN_ESP32" https://github.com/rgot-org/TheThingsNetwork_esp32
-    "Adfruit NeoPixel" https://github.com/adafruit/Adafruit_NeoPixel
-    "HelTec" https://github.com/HelTecAutomation/Heltec_ESP32 -
-    "MHZ19" https://github.com/tobiasschuerg/MH-Z-CO2-Sensors
-    "Adafruit_BME680" und "Adafruit_Sensors"
-    "ESP SoftwareSerial" https://github.com/plerup/espsoftwareserial/
-    Please check config.h for configurations
-    #if DATA_LOG_INFLUX
-    #include <ESP8266Influxdb.h>  // http://librarymanager#ESP8266_InfluxDB
-    #endif
+  Date/Version: 202201241800
+  Libraries:
+    Arduino.h>           -> https://github.com/esp8266/Arduino
+    ArduinoJson.h        -> https://github.com/bblanchon/ArduinoJson
+    Wire.h               -> http://librarymanager#Wire
+    SoftwareSerial.h     -> http://librarymanager#SoftSerial
+    Adafruit_NeoPixel.h  -> http://librarymanager#Adafruit_NeoPixel
+    SSD1306Wire.h        -> http://librarymanager#SSD1306_esp8266_oled_driver
+    Adafruit_Sensor.h    -> http://librarymanager#Adafruit_Sensor
+    MHZ19.h              -> http://librarymanager#MH-Z19 (by J. Dempsey)
+    Adafruit_BME680.h    -> http://librarymanager#Adafruit_BME680
+    
+  Include: 
+    images.h             -> Create new tab in Arduino IDE and copy example from github if not there
+    config.h             -> Create new tab in Arduino IDE and copy example from github if not there
 */
 
-#include <Arduino.h>            // https://github.com/esp8266/Arduino
+#include <Arduino.h>            
 
 #ifdef __AVR__
   #include <avr/power.h>
 #endif
 
-#include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson
-#include <Wire.h>               // http://librarymanager#Wire
-#include "images.h"             // Create new tab in Arduino IDE and copy example from github if not there
-#include "config.h"             // Create new tab in Arduino IDE and copy example from github if not there
-#include <SoftwareSerial.h>     // http://librarymanager#SoftSerial
-#include <Adafruit_NeoPixel.h>  // http://librarymanager#Adafruit_NeoPixel
-#include "SSD1306Wire.h"        // http://librarymanager#SSD1306_esp8266_oled_driver
-#include <Adafruit_Sensor.h>    // http://librarymanager#Adafruit_Sensor
+#include <ArduinoJson.h>
+#include <Wire.h>              
+#include "images.h"            
+#include "config.h"            
+#include <SoftwareSerial.h>     
+#include <Adafruit_NeoPixel.h>  
+#include "SSD1306Wire.h"        
+#include <Adafruit_Sensor.h>   
 
 #if SENSOR_MHZ19B
-  #include "MHZ19.h"            // http://librarymanager#MH-Z19 (by J. Dempsey)
+  #include "MHZ19.h"           
 #endif
 
 #if SENSOR_BME680
-  #include "Adafruit_BME680.h"  // http://librarymanager#Adafruit_BME680
+  #include "Adafruit_BME680.h"  
 #endif
 
 /***************************************************************************
