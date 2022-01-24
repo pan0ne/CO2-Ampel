@@ -301,37 +301,6 @@ void co2Warnung()
   }
 }
 
-void co2WarnungTone()
-{
-  if(CO2 < 1500) {
-     if((CO2 > 1400) && (CO2 < 1500 )) {
-      tone(14, 800); // …spiele diesen Ton...
-      delay(100); //…und zwar für eine Sekunde...
-      tone(14, 600); // …spiele diesen Ton...
-      delay(200); //…und zwar für eine Sekunde...
-      tone(14, 400); // …spiele diesen Ton...
-      delay(300); //…und zwar für eine Sekunde...
-      noTone(14); // Ton abschalten
-      }
-  } else {
-  if(CO2 < 2000) {
-      if((CO2 > 1900) && (CO2 < 2000 )) {
-      tone(14, 800); // …spiele diesen Ton...
-      delay(100); //…und zwar für eine Sekunde...
-      tone(14, 600); // …spiele diesen Ton...
-      delay(200); //…und zwar für eine Sekunde...
-      tone(14, 400); // …spiele diesen Ton...
-      delay(300); //…und zwar für eine Sekunde...
-      noTone(14); // Ton abschalten
-      }
-  } else {
-      tone(14, 600); // …spiele diesen Ton...
-      delay(200); //…und zwar für eine Sekunde...
-      noTone(14); // Ton abschalten
-      }
-    }      
-}
-
 void GetGasReference() {
   // Now run the sensor for a burn-in period, then use combination of relative humidity and gas resistance to estimate indoor air quality as a percentage.
   #if DEBUG
@@ -386,19 +355,3 @@ int GetGasScore() {
   return gas_score;
 }
 
-float getBatteryVoltage(){
-    //************ Measuring Battery Voltage Example ***********
-    float sample1 = 0;
-    // Get 100 analog read to prevent unusefully read
-    for (int i = 0; i < 100; i++) {
-        sample1 = sample1 + analogRead(A0); //read the voltage from the divider circuit
-        delay(2);
-    }
-    sample1 = sample1 / 100;
-    // REFERENCE_VCC is reference voltage of microcontroller 3.3v for esp8266 5v Arduino
-    // BAT_RES_VALUE_VCC is the kohom value of R1 resistor
-    // BAT_RES_VALUE_GND is the kohom value of R2 resistor
-    // 1023 is the max digital value of analog read (1024 == Reference voltage)
-    float batVolt = (sample1 * REFERENCE_VCC  * (BAT_RES_VALUE_VCC + BAT_RES_VALUE_GND) / BAT_RES_VALUE_GND) / 1023;
-    return batVolt;
-}
