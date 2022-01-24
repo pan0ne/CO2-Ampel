@@ -209,7 +209,7 @@ void loop()
   display.clear();
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_10);
-  //display.drawString(62, 1, String(air_quality));
+  display.drawString(62, 1, String(air_quality));
   display.drawXbm(12, 14, co2_sym_width, co2_sym_height, co2_sym);
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.setFont(ArialMT_Plain_24);
@@ -347,11 +347,12 @@ void GetGasReference() {
 String CalculateIAQ(int score) {
   String IAQ_text = "Luft ";
   score = (100 - score) * 5;
-  if      (score >= 651)                  IAQ_text += "ist nicht gut (Stufe 5)";
-  else if (score >= 451 && score <= 650 ) IAQ_text += "ist schlecht (Stufe 4)";
-  else if (score >= 251 && score <= 450 ) IAQ_text += "noch OK (Stufe 3)";
-  else if (score >= 151 && score <= 250 ) IAQ_text += "ist gut (Stufe 2)";
-  else if (score >=  00 && score <= 150 ) IAQ_text += "ist frisch (Stufe 1)";
+  if      (score >= 301)                  IAQ_text += "ist gefährlich";
+  else if (score >= 201 && score <= 300 ) IAQ_text += "ist sehr ungesund";
+  else if (score >= 151 && score <= 200 ) IAQ_text += "ist ungesund";
+  else if (score >= 101 && score <= 150 ) IAQ_text += "noch OK";
+  else if (score >= 51 && score <= 100 ) IAQ_text += "ist gut";
+  else if (score >=  00 && score <= 50 ) IAQ_text += "ist frisch";
   //display.setTextAlignment(TEXT_ALIGN_CENTER);
   //display.setFont(ArialMT_Plain_10);
   //display.drawString(60, 59, "IAQ Score = " + String(score) + ", ");
